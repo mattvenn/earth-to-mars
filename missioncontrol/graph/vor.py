@@ -13,18 +13,21 @@ for i in range(5):
 points = [d['xy'] for d in data]
 
 # compute Voronoi tesselation
-vor = Voronoi(points)
+vor = Voronoi(points,furthest_site=False, incremental=False)
 
 # plot
 voronoi_plot_2d(vor)
 
 # colorize
-for region in vor.regions:
+for region, num_reg in zip(vor.regions, range(len(vor.regions))):
     if not -1 in region:
         polygon = [vor.vertices[i] for i in region]
         if len(polygon):
 #            point_index = vor.point_region[region]
+            print vor.point_region[num_reg]
             plt.fill(*zip(*polygon), color=(0.5,0.5,0.5))
 
-import ipdb; ipdb.set_trace()
+print vor.regions
+print vor.point_region
+print points
 plt.show()
