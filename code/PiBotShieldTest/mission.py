@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 import os
+from PIL import Image, ImageStat
 GPIO.setmode(GPIO.BOARD)
 
 data_file = "mission.txt"
@@ -28,8 +29,18 @@ def save_data(data):
 	with open(data_file,'a') as fh:
 		fh.write(str(data) + "\n")
 
+
+def process(file_name):
+    im = Image.open(file_name).convert('L')
+    stat = ImageStat.Stat(im)
+    return stat.rms[0]
+
+
 if __name__ == '__main__':
 	wait_for_button()	
 	delete_data()
 	save_data(10.0)
 	save_data("Mars")
+
+    for filename in ['black','grey','white']:
+        print(filename, process(filename + ".jpg"))
