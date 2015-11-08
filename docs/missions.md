@@ -92,7 +92,7 @@ with picamera.PiCamera() as camera:
 
 ## 4 - Obstacle avoidance
 
-NB. Ultrasound isn't working.
+TODO ultrasound needs testing
 
 * Use the robot’s ultrasonic detectors to stop the robot hitting a wall.
 * Programming concepts required: conditionals.
@@ -152,7 +152,7 @@ print("hello!")
 
 Write a short program that waits for the button and then drives the robot forward. 
 
-## 5 - Saving and reading transmissions
+## 6 - Saving and reading transmissions
 
 * Take a temperature sample and send the data. Then receive the data and check it’s correct.
 * Programming concepts required: data
@@ -189,7 +189,7 @@ Tips:
 * Start your program running
 * Unplug the keyboard, mouse and monitor before taking your robot to the launch location.
 
-Good luck!
+How do you think scientists get the real Mars robot to start a new mission?
 
 ## 2 - Drive to a location, take a sample.
 
@@ -217,8 +217,10 @@ To find your location, you need to point the camera straight up and take a photo
 You already know how to take a photo, here's how to aim the camera:
 
 ~~~ { .python .numberLines }
-TODO
+TODO servo needs testing
 ~~~
+
+Given that Mars doesn't have a GPS system, how do you think the real Mars robot works out its position? 
 
 ## 3 - Upload sample data to group database.
 
@@ -271,6 +273,8 @@ else:
     print("medium")
 ~~~
 
+How long do you think the real robot's batteries last?
+
 ## 5 - Find an unknown obstacle using distance sensors and take a photo
 
 * Difficulty: 5/5
@@ -284,6 +288,9 @@ When your robot returns, work out the location from the upwards image and upload
 the photo to `http://mission.control/upload/photo`.
 
 Mission control will build a panorama of the images as more are uploaded.
+
+How many photos do you think the real robot takes in a day? How many of those do
+you think get sent back to Earth for analysis by scientists?
 
 ## 6 - Averaging
 
@@ -299,6 +306,9 @@ Tips:
 * After the loop, divide the total by your number (10 in this case).
 
 The more samples you take, the more accurate the measurement.
+
+How many samples do you think you should take for temperature, humidity and
+hydrogen? Why?
 
 ## 7 - Multi sample
 
@@ -349,3 +359,6 @@ for temp, loc in zip(temps, locations)
 ~~~
 
 Adapt this program to upload all your samples.
+
+If the robot sends back 10,000 samples, do you think scientists look at them all
+individually or use a computer to analyse them? Why?
