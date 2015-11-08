@@ -1,6 +1,6 @@
 # Training Missions
 
-Training missions are carried out on the desk and get the children familiar with the robot’s capabilities and Python.
+The following training missions will get you prepared for the real missions.
 
 To get started, double click on the Idle2 icon.
 
@@ -124,6 +124,17 @@ while True:
 
 To stop the loop, choose the window titled 'shell' and press `control` and `c` at the same time.
 
+Add a `conditional` to your program so that when the robot is within 20cm of an
+obstacle it prints a message on your screen. Here's how you can make a simple
+`if` conditional work:
+
+~~~ { .python .numberLines }
+# make a variable called distance and store the distance in it
+distance = ultra.getDistance()
+if distance < 50:
+    print("obstacle detected!")
+~~~
+
 ## 5 - Starting a mission with the button
 
 All the training missions have been completed with the robot on the desk in front of you. When your robot is in the Mars yard, you won't have access to it.
@@ -219,9 +230,10 @@ TODO
 If your previous mission was a success, you will have a photo and some data in `mission.txt`.
 
 Double click the photo and work out the number that's closest to the centre, this is your position number.
-Look at the contents of `mission.txt`. To submit your samples to the group database, open the web browser and go to `http://mission.control/submit`.
+Look at the contents of `mission.txt`. To upload your samples to the group
+database, open the web browser and go to `http://mission.control/upload/sample`.
 
-Enter your location and sample values into the fields and then press `submit`.
+Enter your location and sample values into the fields and then press `upload`.
 
 You can see the results of all the data on the big mission control screen, or go to `http://mission.control`. Where do you think the best places are to search for life? Why?
 
@@ -236,7 +248,9 @@ The Mars rover charges its batteries using solar panels. This makes going into d
 
 In this mission, you'll use the camera to find somewhere dark, then drive somewhere light to charge your batteries.
 
-You already know how to take a photo, this code shows how to process the image to get a value between completely dark (0) and completely white (255).
+You already know how to take a photo, this code shows how to process the image
+to get a value between completely dark (0) and completely white (255). It also
+adds to your knowledge about `conditionals`.
 
 ~~~ { .python .numberLines }
 import mission
@@ -263,7 +277,13 @@ else:
 * Curriculum links: design, use and evaluate computational abstractions that model the state and behaviour of real-world problems and physical systems. Understand several key algorithms that reflect computational thinking
 * STEM links: engineering, maths.
 
-Ultrasound isn't working yet, if it works then participants drive to a place where they are close to the wall, take a photo looking forwards, and one up. Then upload the data to mission control. Mission control will build a panarama from the location and the picture.
+Use your ultrasound sensor to detect where the edges of the Mars Yard are. Drive
+to 20cm away and take a photo pointing forwards, and one upwards for location.
+
+When your robot returns, work out the location from the upwards image and upload
+the photo to `http://mission.control/upload/photo`.
+
+Mission control will build a panorama of the images as more are uploaded.
 
 ## 6 - Averaging
 
