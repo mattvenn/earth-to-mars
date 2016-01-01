@@ -6,6 +6,9 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from contextlib import closing
 from initialise import initialise
 import time
+from flask_wtf import Form
+from wtforms import TextField, IntegerField, FloatField, SelectField
+from wtforms import validators
 
 # configuration
 DATABASE = './mc.db'
@@ -17,6 +20,8 @@ PASSWORD = 'default'
 # create our little application :)
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+
 
 def connect_db():
     conn = sqlite3.connect(app.config['DATABASE'])
@@ -59,6 +64,50 @@ def mission_control():
     secs = delta.total_seconds() % 60
     time_info = { 'now': now.strftime('%d/%m/%Y %H:%M:%S'),  'left': '%02d:%02d:%02d' % (hours, mins, secs) }
     return render_template('mission_control.html', school_info=school_info, time_info=time_info)
+
+
+class SampleForm(Form):
+    db = connect_db()
+    cur = db.execute('select id, name from sample_types order by id')
+    sample_types = cur.fetchall()
+    sample_choices = [(row['id'], row['name']) for row in sample_types ]
+    cur = db.execute('select id, name from teams order by id')
+    teams = cur.fetchall()
+    team_choices = [(row['id'], row['name']) for row in teams ]
+
+    sample_type = SelectField('Sample Type', choices=sample_choices, coerce=int)
+    team = SelectField('Team Name', choices=team_choices, coerce=int)
+    sample = FloatField('Sample Value')
+    x = IntegerField('X', [validators.NumberRange(min=0, max=10)])
+    y = IntegerField('Y', [validators.NumberRange(min=0, max=10)])
+
+@app.route('/show_samples')
+def show_samples():
+    cur = g.db.execute('select * from samples order by timestamp')
+    samples = cur.fetchall()
+    return render_template('show_samples.html', samples=samples)
+
+@app.route('/admin/add/team', methods=['GET', 'POST'])
+def add_team():
+    form = SampleForm()
+    error = None
+    if form.validate_on_submit():
+        # validate sample's min & max
+        cur = g.db.execute('select min, max from sample_types where id = ?', [form.sample_type.data])
+        sample_type = cur.fetchone()
+        if form.sample.data > sample_type['max'] :
+            error = "sample too big - largest can be %f" % sample_type['max']
+        elif form.sample.data < sample_type['min'] :
+            error = "sample too big - smallest can be %f" % sample_type['min']
+        else:
+            g.db.execute('insert into samples (team_id, type_id, x, y, value) values (?, ?, ?, ?, ?)',
+                         [form.team.data, form.sample_type.data, form.x.data, form.y.data, form.sample.data])
+            g.db.commit()
+            add_point()
+            flash('sample logged')
+            return redirect(url_for('add_team'))
+    print error
+    return render_template('add_team.html', form=form, error=error)
 
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def upload_sample():

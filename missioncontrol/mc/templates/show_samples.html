@@ -1,10 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-  <img src="{{ url_for('static', filename='vor.png') }}">
+<!--  <img src="{{ url_for('static', filename='vor.png') }}"> -->
   <br>
   <ul class=samples>
   {% for sample in samples %}
-    <li>{{ sample.x }}, {{sample.y}} = {{sample.c}}</li>
+    <li>{{ sample.timestamp}} {{ sample.x }}, {{sample.y}} = {{sample.value}}</li>
   {% else %}
     <li>No samples here so far</li>
   {% endfor %}
