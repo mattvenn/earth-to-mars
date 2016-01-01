@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if session.logged_in %}
+    <form action="{{ url_for('add_school') }}" method=post class=add-school>
+      <dl>
+        <dt>School name:
+        <dd><input type=text size=30 name=name>
+      </dl>
+      <dd><input type=submit value='Add school'>
+    </form>
+
+  <ul class=schools>
+  {% for school in schools %}
+    <li>{{ school.name }} {{ school.timestamp }} {{ school.points }}
+  {% else %}
+    <li>No schools found
+  {% endfor %}
+  </ul>
+
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="badge"></div>
+<div class="school-name">School: {{ school_info.name }}</div>
+<div class="points">Points: {{ school_info.points }}</div>
+<div class="time-now">{{ time_info.now }}</div>
+<div class="time-left">T minus {{ time_info.left }}</div>
+{% endblock %}

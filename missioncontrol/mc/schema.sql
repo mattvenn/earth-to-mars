@@ -4,7 +4,7 @@ create table answers (
     team_id integer not null,
     mission_id integer not null,
     answer_text text not null,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 drop table if exists questions;
@@ -12,13 +12,16 @@ create table questions (
     id integer primary key autoincrement,
     mission_id integer not null,
     question_text text not null,
-    photo_path text not null,
+    answer_text text not null,
+    photo_path text not null
 );
 
-drop table if exists samples_types;
-create table samples_types (
+drop table if exists sample_types;
+create table sample_types (
     id integer primary key autoincrement,
-    name text not null,
+    min float not null,
+    max float not null,
+    name text not null
 );
 
 drop table if exists samples;
@@ -28,8 +31,8 @@ create table samples (
     type_id integer not null,
     x integer not null,
     y integer not null,
-    c float not null
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    value float not null,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 drop table if exists photos;
@@ -39,12 +42,20 @@ create table photos (
     x integer not null,
     y integer not null,
     path text not null,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 drop table if exists schools;
 create table schools (
     id integer primary key autoincrement,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    name text not null,
+    points integer default 0,
+    name text not null
+);
+
+drop table if exists teams;
+create table teams (
+    id integer primary key autoincrement,
+    points integer default 0,
+    name text not null
 );

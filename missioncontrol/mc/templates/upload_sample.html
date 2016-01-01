@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
+    <form action="{{ url_for('upload_sample') }}" method=post class=upload-sample>
+      <dl>
+        <dt>Sample type:
+        <select name=sample_id>
+          {% for sample_type in sample_types %}
+          <option value={{ sample_type.id }}>{{ sample_type.name }}</option>
+          {% endfor %}
+        </select>
+      </dl>
+      <dl>
+        <dt>Team id:
+        <dd>
+        <select name=team_id>
+          {% for team in teams %}
+          <option value={{ team.id }}>{{ team.name }}</option>
+          {% endfor %}
+        </select>
+      </dl>
+      <dl>
+        <dt>x, y:
+        <dd><input type=text size=3 name=x>,<input type=text size=3 name=y>
+      </dl>
+      <dl>
+        <dt>value:
+        <dd><input type=text size=3 name=value>
+      </dl>
+      {% if question %}
+      <dl>
+        <dt>{{ question.question_text }}
+        <dd><input type=text size=30 name=answer>
+      </dl>
+      {% endif %}
+
+      <dd><input type=submit value='Upload'>
+    </form>
+
+{% endblock %}
