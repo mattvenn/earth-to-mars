@@ -17,6 +17,8 @@ DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
+MAX_X = 10
+MAX_Y = 20
 
 # create our little application :)
 app = Flask(__name__)

@@ -1,8 +1,8 @@
 from mc import app
-import sqlite3
+from sqlalchemy.exc import IntegrityError
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash
+     abort, render_template, flash, jsonify
 from contextlib import closing
 from initialise import initialise
 import time
@@ -108,6 +108,50 @@ def add_sample():
         flash('sample logged')
         return redirect(url_for('add_sample'))
     return render_template('add_sample.html', form=form)
+
+class InvalidUsage(Exception):
+    status_code = 400
+
+    def __init__(self, message, status_code=None, payload=None):
+        Exception.__init__(self)
+        self.message = message
+        if status_code is not None:
+            self.status_code = status_code
+        self.payload = payload
+
+    def to_dict(self):
+        rv = dict(self.payload or ())
+        rv['message'] = self.message
+        return rv
+
+@app.errorhandler(InvalidUsage)
+def handle_invalid_usage(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+@app.route('/api/sample/<int:sample_id>', methods=['GET'])
+def api_get_sample(sample_id):
+    sample = Sample.query.get(sample_id)
+    if not sample:
+        raise InvalidUsage("no sample of that id found")
+    return jsonify(sample.serialise())
+
+
+@app.route('/api/sample', methods=['POST'])
+def api_add_sample():
+    if not request.json:
+        raise InvalidUsage("json needed")
+
+    form = SampleForm(data = request.get_json())
+    form.csrf_enabled = False
+    if not form.validate():
+        raise InvalidUsage("invalid data", payload=form.errors)
+
+    db_session.add(form.sample)
+    db_session.commit()
+        
+    return jsonify(form.sample.serialise()), 201
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

@@ -67,4 +67,14 @@ class Sample(Base):
         self.type = type
 
     def __repr__(self):
-        return '<SampleType %r %d %d>' % (self.value, self.x, self.y)
+        return '<%s Sample at %d,%d = %f>' % (self.type, self.x, self.y, self.value)
+
+    def serialise(self):
+        return {
+            'id' : self.id,
+            'x' : self.x,
+            'y' : self.y,
+            'type' : self.type.name,
+            'team' : self.team.name,
+            'value' : self.value,
+            }
