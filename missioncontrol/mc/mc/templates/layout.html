@@ -14,4 +14,9 @@
     <div class=flash>{{ message }}</div>
   {% endfor %}
   {% block body %}{% endblock %}
+<div class=footer>
+    <a href="{{ url_for('show_samples') }}">samples</a>
+    <a href="{{ url_for('add_sample') }}">add sample</a>
+    <a href="{{ url_for('mission_control') }}">mission control</a>
+</div>
 </div>

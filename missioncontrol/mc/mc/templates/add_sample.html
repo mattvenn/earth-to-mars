@@ -1,15 +1,14 @@
 {% extends "layout.html" %}
 {% block body %}
 {% from "_formhelpers.html" import render_field %}
-<form action="{{ url_for('add_team') }}" method=post class=upload-sample>
+<form action="{{ url_for('add_sample') }}" method=post class=upload-sample>
   <dl>
-    {% if error %}<p class=error><strong>Error:</strong> {{ error }}{% endif %}
     {{ form.csrf_token }}
-    {{ render_field(form.sample_type) }}
+    {{ render_field(form.type) }}
     {{ render_field(form.team) }}
     {{ render_field(form.x) }}
     {{ render_field(form.y) }}
-    {{ render_field(form.sample) }}
+    {{ render_field(form.value) }}
   </dl>
   <p><input type=submit value=Register>
 </form>
