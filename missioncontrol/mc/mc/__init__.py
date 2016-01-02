@@ -11,7 +11,6 @@ from wtforms import TextField, IntegerField, FloatField, SelectField
 from wtforms import validators
 from mc.database import db_session
 
-
 # configuration
 DATABASE = './mc.db'
 DEBUG = True
@@ -22,15 +21,24 @@ PASSWORD = 'default'
 # create our little application :)
 app = Flask(__name__)
 app.config.from_object(__name__)
-from flask_admin import Admin
+from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from mc.models import Teams, School, Sample_Types, Sample
 
-admin = Admin(app, name='mc', template_mode='bootstrap3')
-admin.add_view(ModelView(School, db_session))
-admin.add_view(ModelView(Sample, db_session))
-admin.add_view(ModelView(Sample_Types, db_session))
-admin.add_view(ModelView(Teams, db_session))
+class SecureView(ModelView):
+    def is_accessible(self):
+        if 'logged_in' in session.keys():
+            return True
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+
+admin = Admin(app, name='mission control')
+admin.add_view(SecureView(School, db_session))
+admin.add_view(SecureView(Sample, db_session))
+admin.add_view(SecureView(Sample_Types, db_session))
+admin.add_view(SecureView(Teams, db_session))
 
 import mc.views
 

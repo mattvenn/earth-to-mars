@@ -6,8 +6,9 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from contextlib import closing
 from initialise import initialise
 import time
+from flask_admin import Admin, AdminIndexView
 
-from wtforms import TextField, IntegerField, FloatField, SelectField
+from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordField
 from wtforms import validators
 from flask_wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -23,6 +24,25 @@ def add_school_point():
     school = School.query.order_by(School.timestamp.desc()).first()
     school.points += 1
     db_session.commit()
+
+class LoginForm(Form):
+    username = TextField('Username', [validators.Required()])
+    password = PasswordField('Password', [validators.Required()])
+
+    def validate(self):
+        rv = Form.validate(self)
+        if not rv:
+            return False
+
+        if self.username.data != app.config['USERNAME']:
+            self.username.errors.append('Unknown username')
+            return False
+
+        if self.password.data != app.config['PASSWORD']:
+            self.password.errors.append('bad password')
+            return False
+
+        return True
 
 class SampleForm(Form):
     
@@ -89,39 +109,17 @@ def add_sample():
         return redirect(url_for('add_sample'))
     return render_template('add_sample.html', form=form)
 
-@app.route('/admin/add_school', methods=['POST'])
-def add_school():
-    if not session.get('logged_in'):
-        abort(401)
-    g.db.execute('insert into schools (name) values (?)',
-                 [request.form['name']])
-    g.db.commit()
-    flash('New school was successfully added')
-    return redirect(url_for('admin'))
-
-@app.route('/admin', methods=['GET', 'POST'])
-def admin():
-    cur = g.db.execute('select name, points, timestamp from schools order by id ')
-    schools = cur.fetchall()
-    return render_template('admin.html', schools=schools)
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('admin'))
-    return render_template('login.html', error=error)
+    form = LoginForm()
+    if form.validate_on_submit():
+        session['logged_in'] = True
+        return redirect('/admin')
+    return render_template('login.html', form=form)
 
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
-    return redirect(url_for('admin'))
+    return redirect(url_for('mission_control'))
 
