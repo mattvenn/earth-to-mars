@@ -54,8 +54,8 @@ class Sample(Base):
     type_id = Column(Integer, ForeignKey('sample_types.id'), nullable=False)
     type = relationship("Sample_Types")
 
-    x = Column(Integer())
-    y = Column(Integer())
+    x = Column(Integer(), nullable=False)
+    y = Column(Integer(), nullable=False)
     value = Column(Float(), nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
