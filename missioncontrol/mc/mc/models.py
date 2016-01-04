@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from mc.database import Base
 from datetime import datetime
+from mc import db
 
-class Teams(Base):
+class Teams(db.Model):
     __tablename__ = 'teams'
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
@@ -16,7 +16,7 @@ class Teams(Base):
     def __repr__(self):
         return self.name
 
-class School(Base):
+class School(db.Model):
     __tablename__ = 'schools'
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
@@ -30,7 +30,7 @@ class School(Base):
     def __repr__(self):
         return self.name
 
-class Sample_Types(Base):
+class Sample_Types(db.Model):
     __tablename__ = 'sample_types'
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
@@ -45,7 +45,7 @@ class Sample_Types(Base):
     def __repr__(self):
         return self.name
 
-class Sample(Base):
+class Sample(db.Model):
     __tablename__ = 'samples'
     id = Column(Integer, primary_key=True)
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)

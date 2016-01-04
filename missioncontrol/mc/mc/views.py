@@ -1,29 +1,37 @@
 from mc import app
+from mc import db
 from sqlalchemy.exc import IntegrityError
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash, jsonify
 from contextlib import closing
-from initialise import initialise
+from flask_admin.contrib.sqla import ModelView
 import time
-from flask_admin import Admin, AdminIndexView
 
 from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordField
 from wtforms import validators
 from flask_wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-
-from mc.database import db_session
 from mc.models import Teams, School, Sample_Types, Sample
+
+class SecureView(ModelView):
+    def is_accessible(self):
+        if 'logged_in' in session.keys():
+            return True
+
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
-    db_session.remove()
+    db.session.remove()
 
 def add_school_point():
     school = School.query.order_by(School.timestamp.desc()).first()
     school.points += 1
-    db_session.commit()
+    db.session.commit()
 
 class LoginForm(Form):
     username = TextField('Username', [validators.Required()])
@@ -102,8 +110,8 @@ def add_sample():
     form = SampleForm(request.form)
 
     if form.validate_on_submit():
-        db_session.add(form.sample)
-        db_session.commit()
+        db.session.add(form.sample)
+        db.session.commit()
         add_school_point()
         flash('sample logged')
         return redirect(url_for('add_sample'))
@@ -137,7 +145,6 @@ def api_get_sample(sample_id):
         raise InvalidUsage("no sample of that id found")
     return jsonify(sample.serialise())
 
-
 @app.route('/api/sample', methods=['POST'])
 def api_add_sample():
     if not request.json:
@@ -148,8 +155,8 @@ def api_add_sample():
     if not form.validate():
         raise InvalidUsage("invalid data", payload=form.errors)
 
-    db_session.add(form.sample)
-    db_session.commit()
+    db.session.add(form.sample)
+    db.session.commit()
         
     return jsonify(form.sample.serialise()), 201
 
