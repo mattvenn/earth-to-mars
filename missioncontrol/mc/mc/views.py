@@ -28,6 +28,7 @@ class SecureView(ModelView):
 def shutdown_session(exception=None):
     db.session.remove()
 
+# tested
 def add_school_point():
     school = School.query.order_by(School.timestamp.desc()).first()
     school.points += 1
@@ -87,6 +88,7 @@ class SampleForm(Form):
         return True
 
 
+# tested
 @app.route('/')
 def mission_control():
     school = School.query.order_by(School.timestamp.desc()).first()
@@ -100,11 +102,13 @@ def mission_control():
     time_info = { 'now': now.strftime('%d/%m/%Y %H:%M:%S'),  'left': '%02d:%02d:%02d' % (hours, mins, secs) }
     return render_template('mission_control.html', school_info=school, time_info=time_info)
 
+# tested
 @app.route('/show_samples')
 def show_samples():
     samples = Sample.query.all()
     return render_template('show_samples.html', samples=samples)
 
+# tested
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def add_sample():
     form = SampleForm(request.form)
@@ -138,6 +142,7 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
+# tested
 @app.route('/api/sample/<int:sample_id>', methods=['GET'])
 def api_get_sample(sample_id):
     sample = Sample.query.get(sample_id)
@@ -145,6 +150,7 @@ def api_get_sample(sample_id):
         raise InvalidUsage("no sample of that id found")
     return jsonify(sample.serialise())
 
+# tested
 @app.route('/api/sample', methods=['POST'])
 def api_add_sample():
     if not request.json:
@@ -160,6 +166,7 @@ def api_add_sample():
         
     return jsonify(form.sample.serialise()), 201
 
+# tested
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -168,6 +175,7 @@ def login():
         return redirect('/admin')
     return render_template('login.html', form=form)
 
+# tested
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)

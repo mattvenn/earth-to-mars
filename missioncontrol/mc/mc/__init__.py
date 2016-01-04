@@ -5,10 +5,11 @@ import os
 from flask_admin import Admin, AdminIndexView
 
 # configuration
-config_obj = os.environ.get("DIAG_CONFIG_MODULE", "mc.config_real")
+config_obj = os.environ.get("DIAG_CONFIG_MODULE", "mc.config_test")
 
 app = Flask(__name__)
 app.config.from_object(config_obj)
+print app.config.get('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 db.init_app(app)
 

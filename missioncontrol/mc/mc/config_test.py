@@ -1,6 +1,7 @@
 SQLALCHEMY_DATABASE_URI = 'sqlite:///mc_test.db'
 SQLALCHEMY_TRACK_MODIFICATIONS = True
-DEBUG = True
+WTF_CSRF_ENABLED = False
+DEBUG = False
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
