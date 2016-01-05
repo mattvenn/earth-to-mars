@@ -14,15 +14,17 @@ for i in range(25):
     data.append(d)
 """
 import pickle
-with open('data.pkl' ) as fh:
+with open('linear_fade.pkl' ) as fh:
     data = pickle.load(fh)
 
 points = [d['xy'] for d in data]
+import time
 
-for p_num in range(3,len(points)):
+for p_num in range(50,len(points)):
+    t = time.time()
     print("frame %03d of %d" % (p_num, len(points)))
     # compute Voronoi tesselation
-    vor = Voronoi(points[0:p_num])
+    vor = Voronoi(points[0:p_num+4])
 
     #fig = plt.figure()
     fig = voronoi_plot_2d(vor)
@@ -44,6 +46,7 @@ for p_num in range(3,len(points)):
     #plt.show()
     fig.savefig("frames/%04d.png" % p_num)
     plt.close(fig)
+    print time.time() - t
 
 """
 mencoder mf://*.png -mf w=640:h=400:fps=5:type=png -ovc lavc -lavcopts vcodec=mpeg4:mbd=2:trell -oac copy -o output.avi

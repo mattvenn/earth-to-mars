@@ -1,10 +1,10 @@
 from PIL import Image
 from random import randint
-image_file = "fade.png"
-img = Image.open(image_file)
+name = "linear_fade"
+img = Image.open(name + '.png')
 img_width = img.size[0]
 img_height = img.size[1]
-print("opened %s [%d x %d]" % (image_file,img_width,img_height))
+print("opened %s [%d x %d]" % (name,img_width,img_height))
 
 #function that returns the average value of a region of pixels
 def avg_region(image,box):
@@ -17,7 +17,13 @@ def avg_region(image,box):
     return most_present
 
 reg_size = 5
-data = []
+data = [ 
+    {'xy': (-100,-100), 'c': 0 },
+    {'xy': (img_width+100,-100), 'c': 0 },
+    {'xy': (img_width+100,img_height+100), 'c': 0 },
+    {'xy': (-100,img_height+100.1), 'c': 0 },
+]
+
 for i in range(100):
     x = randint(reg_size, img_width - reg_size)
     y = randint(reg_size, img_height - reg_size)
@@ -31,5 +37,5 @@ for i in range(100):
     data.append(d)
 
 import pickle
-with open('data.pkl', 'w') as fh:
+with open(name + '.pkl', 'w') as fh:
     pickle.dump(data, fh)
