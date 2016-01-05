@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if question %}
+    <p class="answer">Answer: {{ question.answer }}</p>
+    {% if question.image_path %}
+    <img class="answer" src="{{ url_for('static', filename=question.image_path) }}"> 
+    {% endif %}
+  {% else %}
+    <p class="answer">Couldn't find an answer to that question!
+  {% endif %}
+  </ul>
+{% endblock %}
+

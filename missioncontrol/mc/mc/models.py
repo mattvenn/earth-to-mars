@@ -1,12 +1,44 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from mc import db
 
+class Questions(db.Model):
+    __tablename__ = 'questions'
+    id = Column(Integer, primary_key=True)
+    question = Column(Text(), nullable=False)
+    answer = Column(Text(), nullable=False)
+    image_path = Column(String(50))
+
+    def __init__(self, question=None, answer=None, image_path=None):
+        self.question = question
+        self.answer = answer
+        self.image_path = image_path
+
+    def __repr__(self):
+        return "%d: %s" % (self.id, self.question)
+
+class Answers(db.Model):
+    __tablename__ = 'answers'
+    id = Column(Integer, primary_key=True)
+    answer = Column(Text(), nullable=False)
+    team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)
+    team = relationship("Teams")
+    question_id = Column(Integer, ForeignKey('questions.id'), nullable=False)
+    question = relationship("Questions")
+
+    def __init__(self, question=None, answer=None, team=None):
+        self.answer = answer
+        self.team = team
+        self.question = question
+
+    def __repr__(self):
+        return self.answer
+
 class Teams(db.Model):
     __tablename__ = 'teams'
     id = Column(Integer, primary_key=True)
-    name = Column(String(50), unique=True)
+    name = Column(String(50), unique=True, nullable=False)
     points = Column(Integer)
 
     def __init__(self, name=None, points=0):
@@ -19,9 +51,9 @@ class Teams(db.Model):
 class School(db.Model):
     __tablename__ = 'schools'
     id = Column(Integer, primary_key=True)
-    name = Column(String(50))
+    name = Column(String(50), nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
-    points = Column(Integer)
+    points = Column(Integer, nullable=False)
 
     def __init__(self, name=None, points=0):
         self.name = name
@@ -33,9 +65,9 @@ class School(db.Model):
 class Sample_Types(db.Model):
     __tablename__ = 'sample_types'
     id = Column(Integer, primary_key=True)
-    name = Column(String(50))
-    min = Column(Float())
-    max = Column(Float())
+    name = Column(String(50), nullable=False)
+    min = Column(Float(), nullable=False)
+    max = Column(Float(), nullable=False)
 
     def __init__(self, name=None, min=0, max=0):
         self.name = name
@@ -59,7 +91,7 @@ class Sample(db.Model):
     value = Column(Float(), nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-    def __init__(self, type, team, x, y, value):
+    def __init__(self, type=None, team=None, x=None, y=None, value=None):
         self.value = value
         self.x = x
         self.y = y

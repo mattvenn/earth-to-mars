@@ -4,6 +4,7 @@ from flask import Flask
 import os
 import json
 from mc.models import Teams, School, Sample_Types, Sample
+from init_db import populate
 
 # use test environment
 os.environ["DIAG_CONFIG_MODULE"] = "mc.config_test"
@@ -25,6 +26,14 @@ class MCEmptyTest(TestCase):
         db.session.remove()
         db.drop_all()
     
+    def test_empty_answers(self):
+        rv = self.client.get("/answers/1")
+        assert 'find an answer to that' in rv.data
+
+    def test_empty_questions(self):
+        rv = self.client.get("/questions/1")
+        assert 'find that question' in rv.data
+        
     def test_empty_samples(self):
         rv = self.client.get("/show_samples")
         assert 'No samples here so far' in rv.data
@@ -67,25 +76,9 @@ class MCPopulatedTest(TestCase):
     def setUp(self):
         db.init_app(self.app)
         with self.app.app_context():
+            db.drop_all()
             db.create_all()
-            self.populate()
-
-    def populate(self):
-        team = Teams('earth')
-        db.session.add(team)
-
-        sample_type = Sample_Types('hydrogen',0,1)
-        db.session.add(sample_type)
-
-        school = School('test')
-        db.session.add(school)
-
-        sample = Sample(sample_type, team, 10, 20, 0.5)
-        db.session.add(sample)
-
-        db.session.commit()
-        assert sample_type.id == 1
-        assert team.id == 1
+            populate()
 
     def tearDown(self):
         db.session.remove()
@@ -126,6 +119,18 @@ class MCPopulatedTest(TestCase):
         rv = self.client.get("/show_samples")
         assert '0.7' in rv.data
 
+    def test_answer_question(self):
+        answer = { 'answer' : None, 'team': None }
+        rv = self.client.post('/questions/1', data=answer, follow_redirects=True)
+        assert 'Not a valid choice' in rv.data
+        assert 'This field is required' in rv.data
+
+        answer['team'] = 1
+        answer['answer'] = 'blah'
+
+        rv = self.client.post('/questions/1', data=answer, follow_redirects=True)
+        assert 'carrots' in rv.data
+        assert 'carrot.png' in rv.data
 
     def test_get_sample_api(self):
         rv = self.client.get('/api/sample/100')
@@ -148,6 +153,7 @@ class MCPopulatedTest(TestCase):
             data=json.dumps({ 'team' : "1", 'type' : "1", 'x' : 1, 'y': 1, 'value' : 0 }), content_type='application/json')
         assert json.loads(rv.data)['id'] == 2
         assert json.loads(rv.data)['value'] == 0
+
 
 if __name__ == '__main__':
     unittest.main()

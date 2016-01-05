@@ -12,7 +12,7 @@ from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordFi
 from wtforms import validators
 from flask_wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from mc.models import Teams, School, Sample_Types, Sample
+from mc.models import Teams, School, Sample_Types, Sample, Answers, Questions
 
 class SecureView(ModelView):
     def is_accessible(self):
@@ -51,6 +51,20 @@ class LoginForm(Form):
             self.password.errors.append('bad password')
             return False
 
+        return True
+
+class AnswerForm(Form):
+    def get_teams():
+        return Teams.query.all()
+
+    team = QuerySelectField(query_factory=get_teams)
+    answer = TextField('Answer', [validators.Required()])
+
+    def validate(self):
+        rv = Form.validate(self)
+        if not rv:
+            return False
+        self.answer = Answers(None, self.answer.data, self.team.data)
         return True
 
 class SampleForm(Form):
@@ -182,3 +196,24 @@ def logout():
     flash('You were logged out')
     return redirect(url_for('mission_control'))
 
+# tested
+@app.route('/answers/<int:question_id>')
+def answers(question_id):
+    question = Questions.query.get(question_id)
+    return render_template('answer.html', question=question)
+
+# tested
+@app.route('/questions/<int:question_id>', methods=['GET', 'POST'])
+def questions(question_id):
+    form = AnswerForm(request.form)
+    question = Questions.query.get(question_id)
+
+    if form.validate_on_submit():
+        form.answer.question = question
+        db.session.add(form.answer)
+        db.session.commit()
+        add_school_point()
+        flash('answer logged')
+        return redirect(url_for('answers', question_id=question_id))
+
+    return render_template('question.html', question=question, form=form)

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+{% from "_formhelpers.html" import render_field %}
+  {% if question %}
+<form action="{{ url_for('questions', question_id = question.id) }}" method=post class=question>
+    <p class="question">Question: {{ question.question }}
+  <dl>
+    {{ form.csrf_token }}
+    {{ render_field(form.team) }}
+    {{ render_field(form.answer) }}
+  </dl>
+  <p><input type=submit value=Submit>
+</form>
+  {% else %}
+    <p class="question">Couldn't find that question!
+  {% endif %}
+{% endblock %}
+
