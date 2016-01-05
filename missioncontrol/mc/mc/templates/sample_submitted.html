@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if sample %}
+  <img class="submit-graph" src="{{ url_for('static', filename='after_submit_%d.png' % sample.id) }}"> 
+  <p>
+    {{ sample }}
+  {% else %}
+    <p>No sample!
+  {% endif %}
+  </ul>
+{% endblock %}

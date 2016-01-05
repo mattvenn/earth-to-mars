@@ -13,6 +13,7 @@ from wtforms import validators
 from flask_wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from mc.models import Teams, School, Sample_Types, Sample, Answers, Questions
+from graphing import submit_graph, update_group_graph
 
 class SecureView(ModelView):
     def is_accessible(self):
@@ -78,8 +79,12 @@ class SampleForm(Form):
     type = QuerySelectField(query_factory=get_sample_types)
     team = QuerySelectField(query_factory=get_teams)
     value = FloatField('Sample Value')
-    x = IntegerField('X', [validators.NumberRange(min=0, max=10)])
-    y = IntegerField('Y', [validators.NumberRange(min=0, max=10)])
+
+    maxx = app.config['MAX_X']
+    maxy = app.config['MAX_Y']
+
+    x = IntegerField('X', [validators.NumberRange(min=0, max=maxx)])
+    y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy)])
 
     def __init__(self, *args, **kwargs):
         Form.__init__(self, *args, **kwargs)
@@ -122,7 +127,10 @@ def show_samples():
     samples = Sample.query.all()
     return render_template('show_samples.html', samples=samples)
 
-# tested
+@app.route('/show_group_graph/<type>')
+def show_group_graph(type):
+    return render_template('show_group_graph.html', type=type)
+
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def add_sample():
     form = SampleForm(request.form)
@@ -131,8 +139,10 @@ def add_sample():
         db.session.add(form.sample)
         db.session.commit()
         add_school_point()
+        submit_graph(form.sample) #  make a graph
+        update_group_graph(form.sample)
         flash('sample logged')
-        return redirect(url_for('add_sample'))
+        return render_template('sample_submitted.html', sample=form.sample)
     return render_template('add_sample.html', form=form)
 
 class InvalidUsage(Exception):
@@ -177,6 +187,8 @@ def api_add_sample():
 
     db.session.add(form.sample)
     db.session.commit()
+    update_group_graph(form.sample)
+    add_school_point()
         
     return jsonify(form.sample.serialise()), 201
 

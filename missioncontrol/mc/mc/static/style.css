@@ -15,6 +15,10 @@ h2              { font-size: 1.2em; }
                   border: 1px solid #aacbe2; }
 .errors         { background: #f0d6d6; padding: 0.5em; }
 
+.mc-graph        { width: 30%; }
+.submit-graph    { width: 100%; }
+.group-graph    { width: 100%; }
+
 div.badge {
    content:url(/static/badge.png);
    width:100px;
