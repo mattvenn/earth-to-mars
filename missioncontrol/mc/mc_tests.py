@@ -84,6 +84,10 @@ class MCPopulatedTest(TestCase):
         db.session.remove()
         db.drop_all()
 
+    def get_school_points(self):
+        school = School.query.order_by(School.timestamp.desc()).first()
+        return school.points
+
     def test_mission_control(self):
         rv = self.client.get("/")
         assert 'Points: 0' in rv.data
@@ -120,6 +124,7 @@ class MCPopulatedTest(TestCase):
         assert '0.7' in rv.data
 
     def test_answer_question(self):
+        points = self.get_school_points()
         answer = { 'answer' : None, 'team': None }
         rv = self.client.post('/questions/1', data=answer, follow_redirects=True)
         assert 'Not a valid choice' in rv.data
@@ -131,6 +136,8 @@ class MCPopulatedTest(TestCase):
         rv = self.client.post('/questions/1', data=answer, follow_redirects=True)
         assert 'carrots' in rv.data
         assert 'carrot.png' in rv.data
+        assert self.get_school_points() == points + 1
+
 
     def test_get_sample_api(self):
         rv = self.client.get('/api/sample/100')
@@ -142,6 +149,8 @@ class MCPopulatedTest(TestCase):
         assert json.loads(rv.data)['value'] == 0.5
        
     def test_add_samples_api(self):
+        points = self.get_school_points()
+
         rv = self.client.post('/api/sample', data=dict(
             {}), follow_redirects=True)
         assert json.loads(rv.data)['message'] == 'json needed'
@@ -153,6 +162,8 @@ class MCPopulatedTest(TestCase):
             data=json.dumps({ 'team' : "1", 'type' : "1", 'x' : 1, 'y': 1, 'value' : 0 }), content_type='application/json')
         assert json.loads(rv.data)['id'] == 2
         assert json.loads(rv.data)['value'] == 0
+
+        assert self.get_school_points() == points + 1
 
 
 if __name__ == '__main__':
