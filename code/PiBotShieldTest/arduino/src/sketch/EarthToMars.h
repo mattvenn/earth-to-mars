@@ -26,8 +26,13 @@ String read_rfid()
 	String rfid = "";
 	if(rfid_serial.available() == 14)
 	{
-		//discard start bit
-		rfid_serial.read();
+		//if not correct start bit, abort
+		if(rfid_serial.read() != 0x02)
+		{
+			rfid_serial.flush();
+			return rfid;
+		}
+
 		for( int i = 0; i < 12; i ++ )
 			rfid += (char)rfid_serial.read();
 		//discard end bit
