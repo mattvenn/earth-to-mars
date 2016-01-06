@@ -37,10 +37,10 @@ def process(file_name):
 
 
 if __name__ == '__main__':
-	wait_for_button()	
-	delete_data()
-	save_data(10.0)
-	save_data("Mars")
+    wait_for_button()	
+    delete_data()
+    save_data(10.0)
+    save_data("Mars")
 
     for filename in ['black','grey','white']:
         print(filename, process(filename + ".jpg"))
