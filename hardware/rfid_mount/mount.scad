@@ -46,5 +46,9 @@ module holes()
     //crystal
     translate([l_hole + off + 13 ,-7.5,0])
         cube([7,2,th*2],center=true);
+    //wire hole
+    translate([-rfid_w/2+5,rfid_l/2-2,0])
+        cube([0.5,6,th*2],center=true);
+
 }
 
