@@ -3,29 +3,36 @@ import time
 import os
 from PIL import Image, ImageStat
 GPIO.setmode(GPIO.BOARD)
+RED_LED_GPIO = 26
+GREEN_LED_GPIO = 29
+BUTTON = 36
 
 data_file = "mission.txt"
 
-def wait_for_button():
-	button = 36
-	RED_LED_GPIO = 26
+GPIO.setup(GREEN_LED_GPIO,GPIO.OUT)
+GPIO.setup(RED_LED_GPIO,GPIO.OUT)
+GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        GPIO.setup(RED_LED_GPIO,GPIO.OUT)
-	GPIO.output(RED_LED_GPIO,True)
-	GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-	print("waiting for button...")
-	while GPIO.input(button) == False:
-		time.sleep(0.1)
-	GPIO.output(RED_LED_GPIO,False)
+def waitForButton():
 
-def delete_data():
+    GPIO.output(GREEN_LED_GPIO,False)
+    GPIO.output(RED_LED_GPIO,True)
+    print("waiting for button...")
+    while GPIO.input(button) == False:
+        time.sleep(0.1)
+    GPIO.output(RED_LED_GPIO,False)
+
+def endMission():
+    GPIO.output(GREEN_LED_GPIO,True)
+
+def deleteData():
 	try:
 		os.unlink(data_file)
 	except OSError:
 		pass
 
 
-def save_data(data):
+def saveData(data):
 	with open(data_file,'a') as fh:
 		fh.write(str(data) + "\n")
 
