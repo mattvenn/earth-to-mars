@@ -1,9 +1,6 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
-#include "Arduino.h"
-#include "Ultrasound.h"
-
 typedef enum
   {
     READ_DIGIATL
@@ -15,9 +12,7 @@ typedef enum
   , READ_RIGHT_ENCODER
   , WRITE_NEO_PIXEL
   , RESET_NEO_PIXELS
-  , READ_TEMP
-  , READ_H2
-  , READ_HUMIDITY
+  , READ_RFID
   } Commands;
 
 int readDigital(int pin)

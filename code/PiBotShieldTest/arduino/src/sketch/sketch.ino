@@ -1,7 +1,14 @@
+#include "Arduino.h"
+//#include <DHT.h>
+#include <Encoder.h>
+//#include <Adafruit_NeoPixel.h>
+
 #include "Commands.h"
 #include "Encoders.h"
-#include "NeoPixel.h"
+//#include "NeoPixel.h"
 #include "EarthToMars.h"
+//#include "Ultrasound.h"
+
 #define MAX_MESSAGE_LENGTH 50
 #define MAX_RESPONSE_LENGTH 20
 
@@ -15,7 +22,7 @@ void setup()
   // reserve 200 bytes for the inputMessage:
   inputMessage.reserve(MAX_MESSAGE_LENGTH);
   encodersInit();
-  setupNeoPixel();
+  //setupNeoPixel();
   setupETM();
 }
 
@@ -46,20 +53,8 @@ void loop()
   answer.reserve(MAX_RESPONSE_LENGTH);
   switch (command)
   {
-  case READ_H2:
-       char hValue[5];
-       sprintf(hValue,"%i",read_h2());
-       answer =+ hValue;
-       break;
-  case READ_TEMP:
-       char tValue[6];
-       sprintf(tValue,"%i",read_temp());
-       answer =+ tValue;
-       break;
-  case READ_HUMIDITY:
-       char huValue[6];
-       sprintf(huValue,"%i",read_humidity());
-       answer =+ huValue;
+  case READ_RFID:
+       answer += read_rfid();
        break;
   case READ_DIGIATL:
        answer =+ readDigital(pin) ? "1" : "0";
@@ -76,29 +71,39 @@ void loop()
        writePWM(pin,value);
        break; 
   case READ_ULTRASOUND:
-       char distanceValue[5];
-       sprintf(distanceValue,"%i",readUltrasound(pin));
-       answer =+ distanceValue;
+       //char distanceValue[5];
+       //sprintf(distanceValue,"%i",readUltrasound(pin));
+       //answer =+ distanceValue;
        break;
   case READ_LEFT_ENCODER:
-       char leftEncoderValue[7];
-       sprintf(leftEncoderValue,"%i",getLeftCount());
-       answer =+ leftEncoderValue;
+       if(value<0){
+         char leftEncoderValue[7];
+         sprintf(leftEncoderValue,"%i",getLeftCount());
+         answer =+ leftEncoderValue;
+       }
+       else{
+         setLeftCount(value);
+       }
        break;
   case READ_RIGHT_ENCODER:
-       char rightEncoderValue[7];
-       sprintf(rightEncoderValue,"%i",getRightCount());
-       answer =+ rightEncoderValue;
+       if(value<0){
+         char rightEncoderValue[7];
+         sprintf(rightEncoderValue,"%i",getRightCount());
+         answer =+ rightEncoderValue;
+       }
+       else{
+         setRightCount(value);
+       }
        break;
   case WRITE_NEO_PIXEL:
-       int redValue;
-       int greenValue;
-       int blueValue;
-       sscanf(inputMessageCharArray,"%i,%i,%i,%i,%i,%i",&command, &pin, &value, &redValue, &greenValue, &blueValue);
-       writeNeoPixel(value,redValue,greenValue,blueValue);
+       //int redValue;
+       //int greenValue;
+       //int blueValue;
+       //sscanf(inputMessageCharArray,"%i,%i,%i,%i,%i,%i",&command, &pin, &value, &redValue, &greenValue, &blueValue);
+       //writeNeoPixel(value,redValue,greenValue,blueValue);
        break;
   case RESET_NEO_PIXELS:
-       clearNeoPixels();
+       //clearNeoPixels();
        break;
   default:
        break;

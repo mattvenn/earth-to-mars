@@ -22,9 +22,7 @@ class Commands:             # call with:
     READ_RIGHT_ENCODER = 6  # result = sendCommand(READ_RIGHT_ENCODER,0,0)
     WRITE_NEO_PIXEL = 7     # sendCommand(WRITE_NEO_PIXEL, pinNumber, pixelNumber 0-8, r,g,b 0-255)
     RESET_NEO_PIXELS = 8    # sendCommand(RESET_NEO_PIXELS, pinNumber, 0)
-    READ_TEMP = 9           # read temp
-    READ_H2 = 10            # read h2
-    READ_HUMIDITY = 11      # read h2
+    READ_RFID = 9           # read rfid
 
 class Arduino:
     connected = False
@@ -60,7 +58,7 @@ class Arduino:
         for argument in otherArguments:
             message += ",{0}".format(argument)
         message += '\n'
-        print message
+        #print message
         Arduino.port.write(message.encode())
         result = Arduino.port.readline()
         Arduino.port.flushInput()
