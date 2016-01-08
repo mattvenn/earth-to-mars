@@ -12,7 +12,7 @@ from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordFi
 from wtforms import validators
 from flask_wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from mc.models import Teams, School, Sample, Answers, Questions
+from mc.models import Teams, School, Sample, Answers, Questions, GroupGraph
 from graphing import submit_graph, update_group_graph
 
 class SecureView(ModelView):
@@ -99,8 +99,9 @@ def mission_control():
     hours = mins / 60
     mins = mins % 60
     secs = delta.total_seconds() % 60
+    group_id = GroupGraph.query.all()[-1].id
     time_info = { 'now': now.strftime('%d/%m/%Y %H:%M:%S'),  'left': '%02d:%02d:%02d' % (hours, mins, secs) }
-    return render_template('mission_control.html', school_info=school, time_info=time_info)
+    return render_template('mission_control.html', school_info=school, time_info=time_info, group_id=group_id)
 
 # tested
 @app.route('/show_samples')
@@ -110,7 +111,8 @@ def show_samples():
 
 @app.route('/show_group_graph/<type>')
 def show_group_graph(type):
-    return render_template('show_group_graph.html', type=type)
+    group_id = GroupGraph.query.all()[-1].id
+    return render_template('show_group_graph.html', type=type, group_id=group_id)
 
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def add_sample():

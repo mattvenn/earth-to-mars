@@ -3,7 +3,8 @@ from scipy.spatial import Voronoi
 import numpy as np
 import math
 from mc import app
-from mc.models import Sample
+from mc import db
+from mc.models import Sample, GroupGraph
 
 def map_color(value, min, max):
     # Figure out how 'wide' each range is
@@ -23,7 +24,7 @@ def voronoi_plot_2d(vor, ax=None):
     if vor.points.shape[1] != 2:
         raise ValueError("Voronoi diagram is not 2-D")
 
-    #ax.plot(vor.points[:,0], vor.points[:,1],'.')
+    ax.plot(vor.points[:,0], vor.points[:,1],'.')
     #ax.plot(vor.vertices[:,0], vor.vertices[:,1])
 
     for simplex in vor.ridge_vertices:
@@ -55,59 +56,55 @@ def voronoi_plot_2d(vor, ax=None):
 
     return ax.figure
 
-def update_group_graph(type):
+def update_group_graph():
     maxx = app.config['MAX_X']
     maxy = app.config['MAX_Y']
     width = app.config['GRAPH_WIDTH']
     height = app.config['GRAPH_HEIGHT']
-
-    types = app.config['SAMPLE_TYPES']
-    s_type = types[type]
-
-
-    start_data = [ 
-        Sample(x=-100, y=-100),
-        Sample(x=maxx+100, y=-100),
-        Sample(x=maxx+100, y=maxy+100),
-        # 100.1 because of a bug
-        Sample(x=-100, y=maxy+100.1), 
-    ]
+    group = GroupGraph()
+    db.session.add(group)
+    db.session.commit()
 
     samples = Sample.query.all()
-    app.logger.info("updating %s group graph using %d samples" % (type, len(samples)))
 
-    # sanity check
-    for s in samples:
-        assert s.x <= maxx
-        assert s.x >= 0
-        assert s.y <= maxy
-        assert s.y >= 0
+    for name in app.config['SAMPLE_TYPES'].keys():
+        app.logger.info("updating %s group graph using %d samples id %d" % (name, len(samples), group.id))
+        config = app.config['SAMPLE_TYPES'][name]
 
-    # later on we need to get the value of each sample...
-    samples = [ { 'xy': (s.x, s.y), 'value': s.__getattribute__(type) } for s in start_data + samples ]
-    # but voronoi needs a list of tuples
-    points = [ s['xy'] for s in samples ]
+        start_data = [ 
+            Sample(x=-100, y=-100),
+            Sample(x=maxx+100, y=-100),
+            Sample(x=maxx+100, y=maxy+100),
+            # 100.1 because of a bug
+            Sample(x=-100, y=maxy+100.1), 
+        ]
 
-    vor = Voronoi(points)
-    fig = voronoi_plot_2d(vor)
 
-    # limits
-    #plt.axis('equal')
-    plt.xlim(0,maxx)
-    plt.ylim(0,maxy)
+        # later on we need to get the value of each sample...
+        all_samples = [ { 'xy': (s.x, s.y), 'value': s.__getattribute__(name) } for s in start_data + samples ]
+        # but voronoi needs a list of tuples
+        points = [ s['xy'] for s in all_samples ]
 
-    # colorize
-    for region, num_reg in zip(vor.regions, range(len(vor.regions))):
-        if not -1 in region:
-            polygon = [vor.vertices[i] for i in region]
-            if len(polygon):
-                pr = list(vor.point_region)
-                p = pr.index(num_reg)
-                color = map_color(samples[p]['value'], s_type['min'], s_type['max'])
-                plt.fill(*zip(*polygon), color=(color, color, color))
+        vor = Voronoi(points)
+        fig = voronoi_plot_2d(vor)
 
-    plt.savefig(app.static_folder + "/" + type + "_group.png")
-    plt.close()
+        # limits
+        #plt.axis('equal')
+        plt.xlim(0,maxx)
+        plt.ylim(0,maxy)
+
+        # colorize
+        for region, num_reg in zip(vor.regions, range(len(vor.regions))):
+            if not -1 in region:
+                polygon = [vor.vertices[i] for i in region]
+                if len(polygon):
+                    pr = list(vor.point_region)
+                    p = pr.index(num_reg)
+                    color = map_color(all_samples[p]['value'], config['min'], config['max'])
+                    plt.fill(*zip(*polygon), color=(color, color, color))
+
+        plt.savefig(app.static_folder + "/" + name + "_group_%d.png" % group.id)
+        plt.close()
         
 def submit_graph(sample):
     maxx = app.config['MAX_X']

@@ -62,6 +62,9 @@ class School(db.Model):
     def __repr__(self):
         return self.name
 
+class GroupGraph(db.Model):
+    __tablename__ = 'groupgraph'
+    id = Column(Integer, primary_key=True)
 
 class Sample(db.Model):
     __tablename__ = 'samples'

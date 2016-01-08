@@ -10,8 +10,8 @@ GRAPH_WIDTH = 800
 GRAPH_HEIGHT = 400
 
 SAMPLE_TYPES = {
-    'methane': { 'min' : 0, 'max': 10, 'unit' : 'ppm' },
-    'oxygen' : { 'min' : 0, 'max': 20, 'unit' : 'ppm' },
-    'temperature' : { 'min' : 0, 'max': 273, 'unit' : 'K' },
-    'humidity' : { 'min' : 0, 'max': 20, 'unit' : '%' },
+    'methane': { 'min' : 0, 'max': 1, 'unit' : 'ppm' },
+    'oxygen' : { 'min' : 0, 'max': 1, 'unit' : 'ppm' },
+    'temperature' : { 'min' : 0, 'max': 1, 'unit' : 'K' },
+    'humidity' : { 'min' : 0, 'max': 1, 'unit' : '%' },
     }
