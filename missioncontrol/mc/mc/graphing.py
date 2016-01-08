@@ -3,8 +3,7 @@ from scipy.spatial import Voronoi
 import numpy as np
 import math
 from mc import app
-from mc.models import Sample_Types, Sample
-from scipy.lib.decorator import decorator as _decorator
+from mc.models import Sample
 
 def map_color(value, min, max):
     # Figure out how 'wide' each range is
@@ -56,26 +55,26 @@ def voronoi_plot_2d(vor, ax=None):
 
     return ax.figure
 
-def update_group_graph(s_type):
+def update_group_graph(type):
     maxx = app.config['MAX_X']
     maxy = app.config['MAX_Y']
     width = app.config['GRAPH_WIDTH']
     height = app.config['GRAPH_HEIGHT']
 
+    types = app.config['SAMPLE_TYPES']
+    s_type = types[type]
 
-    s = s_type
+
     start_data = [ 
-        Sample(type=s, x=-100, y=-100, value=0),
-        Sample(type=s, x=maxx+100, y=-100, value=0),
-        Sample(type=s, x=maxx+100, y=maxy+100, value=0),
+        Sample(x=-100, y=-100),
+        Sample(x=maxx+100, y=-100),
+        Sample(x=maxx+100, y=maxy+100),
         # 100.1 because of a bug
-        Sample(type=s, x=-100, y=maxy+100.1, value=0), 
+        Sample(x=-100, y=maxy+100.1), 
     ]
 
-    samples = Sample.query.filter(Sample.type == s_type).all()
-    import random
-    samples = random.sample(samples,50)
-    app.logger.info("updating %s group graph using %d samples" % (s_type, len(samples)))
+    samples = Sample.query.all()
+    app.logger.info("updating %s group graph using %d samples" % (type, len(samples)))
 
     # sanity check
     for s in samples:
@@ -85,7 +84,7 @@ def update_group_graph(s_type):
         assert s.y >= 0
 
     # later on we need to get the value of each sample...
-    samples = [ { 'xy': (s.x, s.y), 'value': s.value } for s in start_data + samples ]
+    samples = [ { 'xy': (s.x, s.y), 'value': s.__getattribute__(type) } for s in start_data + samples ]
     # but voronoi needs a list of tuples
     points = [ s['xy'] for s in samples ]
 
@@ -104,10 +103,10 @@ def update_group_graph(s_type):
             if len(polygon):
                 pr = list(vor.point_region)
                 p = pr.index(num_reg)
-                color = map_color(samples[p]['value'], s_type.min, s_type.max)
+                color = map_color(samples[p]['value'], s_type['min'], s_type['max'])
                 plt.fill(*zip(*polygon), color=(color, color, color))
 
-    plt.savefig(app.static_folder + "/" + str(s_type) + "group.png")
+    plt.savefig(app.static_folder + "/" + type + "_group.png")
     plt.close()
         
 def submit_graph(sample):
@@ -127,7 +126,10 @@ def submit_graph(sample):
     else:
         ytext = -maxy/4
 
-    text = "%s\n%f" % (sample.type, sample.value)
+    text = ''
+    sample_types = app.config['SAMPLE_TYPES'].keys() 
+    for t in sample_types:
+        text += "%s = %f\n" % (t, sample.__getattribute__(t))
     plt.annotate(text, xy =(sample.x, sample.y), xytext = (xtext,ytext),
             textcoords = 'offset points', ha = 'right', va = 'bottom',
             bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),

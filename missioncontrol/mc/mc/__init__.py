@@ -15,12 +15,11 @@ db.init_app(app)
 
 # have to wait till db is instatiated to use these
 import mc.views
-from mc.models import Teams, School, Sample_Types, Sample, Questions, Answers
+from mc.models import Teams, School, Sample, Questions, Answers
 
 admin = Admin(app, name='mission control')
 admin.add_view(views.SecureView(School, db.session))
 admin.add_view(views.SecureView(Sample, db.session))
-admin.add_view(views.SecureView(Sample_Types, db.session))
 admin.add_view(views.SecureView(Teams, db.session))
 admin.add_view(views.SecureView(Questions, db.session))
 admin.add_view(views.SecureView(Answers, db.session))

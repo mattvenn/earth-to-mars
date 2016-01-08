@@ -62,20 +62,6 @@ class School(db.Model):
     def __repr__(self):
         return self.name
 
-class Sample_Types(db.Model):
-    __tablename__ = 'sample_types'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), nullable=False)
-    min = Column(Float(), nullable=False)
-    max = Column(Float(), nullable=False)
-
-    def __init__(self, name=None, min=0, max=0):
-        self.name = name
-        self.min = min
-        self.max = max
-
-    def __repr__(self):
-        return self.name
 
 class Sample(db.Model):
     __tablename__ = 'samples'
@@ -83,30 +69,36 @@ class Sample(db.Model):
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)
     team = relationship("Teams")
 
-    type_id = Column(Integer, ForeignKey('sample_types.id'), nullable=False)
-    type = relationship("Sample_Types")
+    methane = Column(Float(), nullable=False)
+    oxygen = Column(Float(), nullable=False)
+    temperature = Column(Float(), nullable=False)
+    humidity = Column(Float(), nullable=False)
 
     x = Column(Integer(), nullable=False)
     y = Column(Integer(), nullable=False)
-    value = Column(Float(), nullable=False)
+
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-    def __init__(self, type=None, team=None, x=None, y=None, value=None):
-        self.value = value
+    def __init__(self, team=None, x=None, y=None, methane=0, oxygen=0, temperature=0, humidity=0):
         self.x = x
         self.y = y
         self.team = team
-        self.type = type
+        self.methane = methane
+        self.oxygen = oxygen
+        self.temperature = temperature
+        self.humidity = humidity
 
     def __repr__(self):
-        return '<%s Sample at %d,%d = %f>' % (self.type, self.x, self.y, self.value)
+        return '<Sample at %d,%d = %f %f %f %f>' % (self.x, self.y, self.methane, self.oxygen, self.temperature, self.humidity)
 
     def serialise(self):
         return {
             'id' : self.id,
             'x' : self.x,
             'y' : self.y,
-            'type' : self.type.name,
+            'oxygen' : self.oxygen,
             'team' : self.team.name,
-            'value' : self.value,
+            'methane' : self.methane,
+            'temperature' : self.temperature,
+            'humidity' : self.humidity,
             }

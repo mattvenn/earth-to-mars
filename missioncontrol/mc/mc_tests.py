@@ -3,7 +3,7 @@ from flask.ext.testing import TestCase
 from flask import Flask
 import os
 import json
-from mc.models import Teams, School, Sample_Types, Sample
+from mc.models import Teams, School, Sample
 from mc.graphing import map_color
 from init_db import populate
 
@@ -116,25 +116,27 @@ class MCPopulatedTest(TestCase):
 
     def test_samples(self):
         rv = self.client.get("/show_samples")
-        assert '10, 20 = 0.5' in rv.data
+        assert '10, 20 = 0.1 0.2 0.3 0.4' in rv.data
 
     def test_add_sample(self):
         sample = { 'x' : None, 'y' : None, 'team': None, 'type' : None, 'value' : None }
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'Not a valid choice' in rv.data
-        assert 'must be between 0 and 10' in rv.data
+        assert 'must be between 0 and 20' in rv.data
 
         sample['x'] = 5
         sample['y'] = 5
         sample['team'] = 1
-        sample['type'] = 1
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'class=errors' in rv.data
-        sample['value'] = 10000
+        sample['methane'] = 10000
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
-        assert 'has to be less than 1' in rv.data
+        assert 'must be between 0 and 1' in rv.data
 
-        sample['value'] = 0.7
+        sample['methane'] = 0.7
+        sample['oxygen'] = 0.7
+        sample['temperature'] = 0.7
+        sample['humidity'] = 0.7
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'sample logged' in rv.data
 
@@ -164,10 +166,12 @@ class MCPopulatedTest(TestCase):
         rv = self.client.get('/api/sample/100')
         assert 'no sample of that id found' in rv.data
         rv = self.client.get('/api/sample/1')
-        assert json.loads(rv.data)['type'] == 'hydrogen'
         assert json.loads(rv.data)['x'] == 10
         assert json.loads(rv.data)['y'] == 20
-        assert json.loads(rv.data)['value'] == 0.5
+        assert json.loads(rv.data)['methane'] == 0.1
+        assert json.loads(rv.data)['oxygen'] == 0.2
+        assert json.loads(rv.data)['temperature'] == 0.3
+        assert json.loads(rv.data)['humidity'] == 0.4
        
     def test_add_samples_api(self):
         points = self.get_school_points()
@@ -182,9 +186,9 @@ class MCPopulatedTest(TestCase):
         # could test that min and max samples work
 
         rv = self.client.post('/api/sample', 
-            data=json.dumps({ 'team' : "1", 'type' : "1", 'x' : 1, 'y': 1, 'value' : 0 }), content_type='application/json')
+            data=json.dumps({ 'team' : "1", 'x' : 1, 'y': 1, 'methane' : 0, 'oxygen' : 0, 'temperature' : 0, 'humidity' : 0 }), content_type='application/json')
         assert json.loads(rv.data)['id'] == 2
-        assert json.loads(rv.data)['value'] == 0
+        assert json.loads(rv.data)['oxygen'] == 0
 
         assert self.get_school_points() == points + 1
 

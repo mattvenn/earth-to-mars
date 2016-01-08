@@ -12,7 +12,7 @@ from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordFi
 from wtforms import validators
 from flask_wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from mc.models import Teams, School, Sample_Types, Sample, Answers, Questions
+from mc.models import Teams, School, Sample, Answers, Questions
 from graphing import submit_graph, update_group_graph
 
 class SecureView(ModelView):
@@ -70,41 +70,22 @@ class AnswerForm(Form):
 
 class SampleForm(Form):
     
-    def get_sample_types():
-        return Sample_Types.query.all()
-
     def get_teams():
         return Teams.query.all()
 
-    type = QuerySelectField(query_factory=get_sample_types)
     team = QuerySelectField(query_factory=get_teams)
-    value = FloatField('Sample Value')
+    types = app.config['SAMPLE_TYPES']
+
+    methane = FloatField('Methane', [validators.NumberRange(min=types['methane']['min'], max=types['methane']['max'])])
+    oxygen = FloatField('Oxygen', [validators.NumberRange(min=types['oxygen']['min'], max=types['oxygen']['max'])])
+    temperature = FloatField('Temperature', [validators.NumberRange(min=types['temperature']['min'], max=types['temperature']['max'])])
+    humidity = FloatField('Humidity', [validators.NumberRange(min=types['humidity']['min'], max=types['humidity']['max'])])
 
     maxx = app.config['MAX_X']
     maxy = app.config['MAX_Y']
 
     x = IntegerField('X', [validators.NumberRange(min=0, max=maxx)])
     y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy)])
-
-    def __init__(self, *args, **kwargs):
-        Form.__init__(self, *args, **kwargs)
-        self.sample = None
-
-    def validate(self):
-        rv = Form.validate(self)
-        if not rv:
-            return False
-        sample = Sample(self.type.data, self.team.data, self.x.data, self.y.data, self.value.data)
-
-        if sample.value > sample.type.max:
-            self.value.errors.append('has to be less than %f' % sample.type.max)
-            return False
-        if sample.value < sample.type.min:
-            self.value.errors.append('has to be more than %f' % sample.type.min)
-            return False
-
-        self.sample = sample
-        return True
 
 
 # tested
@@ -136,13 +117,15 @@ def add_sample():
     form = SampleForm(request.form)
 
     if form.validate_on_submit():
-        db.session.add(form.sample)
+        sample = Sample()
+        form.populate_obj(sample)
+        db.session.add(sample)
         db.session.commit()
         add_school_point()
-        submit_graph(form.sample) #  make a graph
+        submit_graph(sample) #  make a graph
         #update_group_graph(form.sample)
         flash('sample logged')
-        return render_template('sample_submitted.html', sample=form.sample)
+        return render_template('sample_submitted.html', sample=sample)
     return render_template('add_sample.html', form=form)
 
 class InvalidUsage(Exception):
@@ -185,12 +168,14 @@ def api_add_sample():
     if not form.validate():
         raise InvalidUsage("invalid data", payload=form.errors)
 
-    db.session.add(form.sample)
+    sample = Sample()
+    form.populate_obj(sample)
+    db.session.add(sample)
     db.session.commit()
     #update_group_graph(form.sample)
     add_school_point()
         
-    return jsonify(form.sample.serialise()), 201
+    return jsonify(sample.serialise()), 201
 
 # tested
 @app.route('/login', methods=['GET', 'POST'])

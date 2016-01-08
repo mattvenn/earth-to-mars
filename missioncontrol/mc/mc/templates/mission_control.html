@@ -5,14 +5,17 @@
 <div class="points">Points: {{ school_info.points }}</div>
 <div class="time-now">{{ time_info.now }}</div>
 <div class="time-left">T minus {{ time_info.left }}</div>
-<a href="{{ url_for('show_group_graph', type='hydrogen') }}">
-    <img class="mc-graph" src="{{ url_for('static', filename='hydrogengroup.png') }}">
+<a href="{{ url_for('show_group_graph', type='methane') }}">
+    <img class="mc-graph" src="{{ url_for('static', filename='methane_group.png') }}">
 </a>
 
-<a href="{{ url_for('show_group_graph', type='hydrogen') }}">
-    <img class="mc-graph" src="{{ url_for('static', filename='hydrogengroup.png') }}">
+<a href="{{ url_for('show_group_graph', type='oxygen') }}">
+    <img class="mc-graph" src="{{ url_for('static', filename='oxygen_group.png') }}">
 </a>
-<a href="{{ url_for('show_group_graph', type='co2') }}">
-    <img class="mc-graph" src="{{ url_for('static', filename='co2group.png') }}"> 
+<a href="{{ url_for('show_group_graph', type='temperature') }}">
+    <img class="mc-graph" src="{{ url_for('static', filename='temperature_group.png') }}"> 
+</a>
+<a href="{{ url_for('show_group_graph', type='humidity') }}">
+    <img class="mc-graph" src="{{ url_for('static', filename='humidity_group.png') }}"> 
 </a>
 {% endblock %}
