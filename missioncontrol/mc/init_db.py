@@ -2,12 +2,10 @@ import os
 os.environ["DIAG_CONFIG_MODULE"] = "mc.config_real"
 from mc import app
 from mc import db
-from mc.models import Teams, School, Sample, Questions, Answers
+from mc.models import Teams, School, Sample, Questions, Answers, GroupGraph
 from mc import graphing
 
 def populate():
-    graphing.update_group_graph()
-
     team = Teams('earth')
     db.session.add(team)
 

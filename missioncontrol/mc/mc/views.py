@@ -88,6 +88,13 @@ class SampleForm(Form):
     y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy)])
 
 
+def get_group_id():
+    try:
+        group_id = GroupGraph.query.all()[-1].id
+    except IndexError:
+        group_id = 0
+    return group_id
+
 # tested
 @app.route('/')
 def mission_control():
@@ -99,9 +106,8 @@ def mission_control():
     hours = mins / 60
     mins = mins % 60
     secs = delta.total_seconds() % 60
-    group_id = GroupGraph.query.all()[-1].id
     time_info = { 'now': now.strftime('%d/%m/%Y %H:%M:%S'),  'left': '%02d:%02d:%02d' % (hours, mins, secs) }
-    return render_template('mission_control.html', school_info=school, time_info=time_info, group_id=group_id)
+    return render_template('mission_control.html', school_info=school, time_info=time_info, group_id=get_group_id())
 
 # tested
 @app.route('/show_samples')
@@ -111,8 +117,7 @@ def show_samples():
 
 @app.route('/show_group_graph/<type>')
 def show_group_graph(type):
-    group_id = GroupGraph.query.all()[-1].id
-    return render_template('show_group_graph.html', type=type, group_id=group_id)
+    return render_template('show_group_graph.html', type=type, group_id=get_group_id())
 
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def add_sample():
