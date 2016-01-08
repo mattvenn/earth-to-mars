@@ -4,6 +4,8 @@ DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
 PASSWORD = 'default'
-MAX_X = 600
-MAX_Y = 400
+MAX_X = 30
+MAX_Y = 20
+GRAPH_WIDTH = 800
+GRAPH_HEIGHT = 400
 

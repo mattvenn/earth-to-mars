@@ -4,6 +4,7 @@ from flask import Flask
 import os
 import json
 from mc.models import Teams, School, Sample_Types, Sample
+from mc.graphing import map_color
 from init_db import populate
 
 # use test environment
@@ -11,6 +12,26 @@ os.environ["DIAG_CONFIG_MODULE"] = "mc.config_test"
 
 from mc import app
 from mc import db
+
+
+class GraphingTest(unittest.TestCase):
+    
+    def test_mapping(self):
+        assert map_color(0,0,1) == 0
+        assert map_color(1,0,1) == 1
+        assert map_color(0.5,0,1) == 0.5
+
+        assert map_color(0,1,0) == 1
+        assert map_color(1,1,0) == 0
+
+        assert map_color(0,0,10) == 0
+        assert map_color(1,0,10) == 0.1
+        assert map_color(10,0,10) == 1
+
+        assert map_color(-10,-10,10) == 0
+        assert map_color(0,-10,10) == 0.5
+        assert map_color(10,-10,10) == 1
+
 
 class MCEmptyTest(TestCase):
 
@@ -108,7 +129,7 @@ class MCPopulatedTest(TestCase):
         sample['team'] = 1
         sample['type'] = 1
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
-        assert 'has to be more than 0' in rv.data
+        assert 'class=errors' in rv.data
         sample['value'] = 10000
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'has to be less than 1' in rv.data
@@ -157,6 +178,8 @@ class MCPopulatedTest(TestCase):
 
         rv = self.client.get("/show_samples")
         assert 'class=samples' in rv.data
+
+        # could test that min and max samples work
 
         rv = self.client.post('/api/sample', 
             data=json.dumps({ 'team' : "1", 'type' : "1", 'x' : 1, 'y': 1, 'value' : 0 }), content_type='application/json')

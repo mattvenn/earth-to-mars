@@ -140,7 +140,7 @@ def add_sample():
         db.session.commit()
         add_school_point()
         submit_graph(form.sample) #  make a graph
-        update_group_graph(form.sample)
+        #update_group_graph(form.sample)
         flash('sample logged')
         return render_template('sample_submitted.html', sample=form.sample)
     return render_template('add_sample.html', form=form)
@@ -187,7 +187,7 @@ def api_add_sample():
 
     db.session.add(form.sample)
     db.session.commit()
-    update_group_graph(form.sample)
+    #update_group_graph(form.sample)
     add_school_point()
         
     return jsonify(form.sample.serialise()), 201
