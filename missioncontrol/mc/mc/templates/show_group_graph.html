@@ -1,4 +1,4 @@
 {% extends "layout.html" %}
 {% block body %}
- <img class="group-graph", src="{{ url_for('static', filename='%s_group_%d.png' % (type, group_id)) }}">
+ <img class="group-graph", src="{{ url_for('static', filename='graphs/%s_group_%d.png' % (type, group_id)) }}">
 {% endblock %}

@@ -6,8 +6,6 @@ USERNAME = 'admin'
 PASSWORD = 'default'
 MAX_X = 30
 MAX_Y = 20
-GRAPH_WIDTH = 800
-GRAPH_HEIGHT = 400
 
 SAMPLE_TYPES = {
     'methane': { 'min' : 0, 'max': 0.1, 'unit' : 'ppm' },

@@ -59,8 +59,6 @@ def voronoi_plot_2d(vor, ax=None):
 def update_group_graph():
     maxx = app.config['MAX_X']
     maxy = app.config['MAX_Y']
-    width = app.config['GRAPH_WIDTH']
-    height = app.config['GRAPH_HEIGHT']
     group = GroupGraph()
     db.session.add(group)
     db.session.commit()
@@ -101,13 +99,10 @@ def update_group_graph():
                     pr = list(vor.point_region)
                     p = pr.index(num_reg)
                     color = map_color(all_samples[p]['value'], config['min'], config['max'])
-                    try:
-                        plt.fill(*zip(*polygon), color=(color, color, color))
-                    except ValueError:
-                        import ipdb; ipdb.set_trace()
+                    plt.fill(*zip(*polygon), color=(color, color, color))
                         
 
-        plt.savefig(app.static_folder + "/" + name + "_group_%d.png" % group.id)
+        plt.savefig(app.static_folder + "/graphs/" + name + "_group_%d.png" % group.id)
         plt.close()
         
 def submit_graph(sample):
@@ -118,23 +113,6 @@ def submit_graph(sample):
     plt.xlim(0,maxx)
     plt.ylim(0,maxy)
 
-    if sample.x < maxx/2:
-        xtext = maxx/4
-    else:
-        xtext = -maxx/4
-    if sample.y < maxy/2:
-        ytext = maxy/4
-    else:
-        ytext = -maxy/4
-
-    text = ''
-    sample_types = app.config['SAMPLE_TYPES'].keys() 
-    for t in sample_types:
-        text += "%s = %f\n" % (t, sample.__getattribute__(t))
-    plt.annotate(text, xy =(sample.x, sample.y), xytext = (xtext,ytext),
-            textcoords = 'offset points', ha = 'right', va = 'bottom',
-            bbox = dict(boxstyle = 'round,pad=0.5', fc = 'yellow', alpha = 0.5),
-            arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
     app.logger.info("updated submit graph")
-    plt.savefig(app.static_folder + "/after_submit_%d.png" % sample.id)
+    plt.savefig(app.static_folder + "/graphs/after_submit_%d.png" % sample.id)
     plt.close()

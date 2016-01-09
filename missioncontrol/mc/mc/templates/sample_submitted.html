@@ -1,9 +1,29 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if sample %}
-  <img class="submit-graph" src="{{ url_for('static', filename='after_submit_%d.png' % sample.id) }}"> 
+  <img class="submit-graph" src="{{ url_for('static', filename='graphs/after_submit_%d.png' % sample.id) }}"> 
   <p>
-    {{ sample }}
+  <div class="samples">
+  <table>
+  <tr>
+    <th>ID</th>
+    <th>X</th>
+    <th>Y</th>
+    <th>Methane ppm</th>
+    <th>Oxygen ppm</th>
+    <th>Temperature C</th>
+    <th>Humidity %</th>
+  </tr>
+  <tr>
+    <td>{{ sample.id }}</td>
+    <td>{{ sample.x }}</td>
+    <td>{{sample.y}}</td>
+    <td>{{sample.methane | round(2)}}</td>
+    <td>{{sample.oxygen | round(2)}}</td>
+    <td>{{sample.temperature| round(2)}}</td>
+    <td>{{sample.humidity | round(2)}}</td>
+  </tr>
+  </table>
   {% else %}
     <p>No sample!
   {% endif %}
