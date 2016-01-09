@@ -101,7 +101,11 @@ def update_group_graph():
                     pr = list(vor.point_region)
                     p = pr.index(num_reg)
                     color = map_color(all_samples[p]['value'], config['min'], config['max'])
-                    plt.fill(*zip(*polygon), color=(color, color, color))
+                    try:
+                        plt.fill(*zip(*polygon), color=(color, color, color))
+                    except ValueError:
+                        import ipdb; ipdb.set_trace()
+                        
 
         plt.savefig(app.static_folder + "/" + name + "_group_%d.png" % group.id)
         plt.close()
