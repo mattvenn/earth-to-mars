@@ -1,11 +1,33 @@
 {% extends "layout.html" %}
 {% block body %}
 <!--  <img src="{{ url_for('static', filename='vor.png') }}"> -->
-  <ul class=samples>
-  {% for sample in samples %}
-    <li>{{ sample.timestamp}} {{ sample.x }}, {{sample.y}} = {{sample.methane}} {{sample.oxygen}} {{sample.temperature}} {{sample.humidity}}</li>
+  {% if not samples %}
+    <p>No samples here so far
   {% else %}
-    <li>No samples here so far</li>
+  <div class="samples">
+  <table>
+  <tr>
+    <th>ID</th>
+    <th>X</th>
+    <th>Y</th>
+    <th>Methane ppm</th>
+    <th>Oxygen ppm</th>
+    <th>Temperature C</th>
+    <th>Humidity %</th>
+  </tr>
+  {% for sample in samples %}
+  <tr>
+    <td>{{ sample.id }}</td>
+    <td>{{ sample.x }}</td>
+    <td>{{sample.y}}</td>
+    <td>{{sample.methane | round(2)}}</td>
+    <td>{{sample.oxygen | round(2)}}</td>
+    <td>{{sample.temperature| round(2)}}</td>
+    <td>{{sample.humidity | round(2)}}</td>
+  </tr>
   {% endfor %}
-  </ul>
+
+  </table>
+  </div>
+  {% endif %}
 {% endblock %}

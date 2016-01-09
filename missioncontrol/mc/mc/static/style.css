@@ -6,9 +6,9 @@ h2              { font-size: 1.2em; }
 
 .page           { margin: 2em auto; width: 35em; border: 5px solid #ccc;
                   padding: 0.8em; background: white; }
-.samples        { list-style: none; margin: 0; padding: 0; }
-.samples li     { margin: 0.8em 1.2em; }
-.samples li h2  { margin-left: -1em; }
+.samples table {  border-collapse: collapse; }
+.samples th, td  { text-align: right; padding: 2px; border-left: 1px solid black;}
+
 .upload-sample      { font-size: 0.9em; border-bottom: 1px solid #ccc; }
 .upload-sample dl   { font-weight: bold; }
 .flash          { background: #cee5F5; padding: 0.5em;
