@@ -1,10 +1,10 @@
 #include "Arduino.h"
 //#include <DHT.h>
-#include <Encoder.h>
+//#include <Encoder.h>
 //#include <Adafruit_NeoPixel.h>
 
 #include "Commands.h"
-#include "Encoders.h"
+//#include "Encoders.h"
 //#include "NeoPixel.h"
 #include "EarthToMars.h"
 //#include "Ultrasound.h"
@@ -21,7 +21,6 @@ void setup()
   Serial.begin(115200);
   // reserve 200 bytes for the inputMessage:
   inputMessage.reserve(MAX_MESSAGE_LENGTH);
-  encodersInit();
   //setupNeoPixel();
   setupETM();
 }
@@ -29,6 +28,7 @@ void setup()
 void loop()
 {
   serialRecieve();
+  checkRFID();
   if(!inputMessageComplete)
     return;
     
@@ -54,7 +54,7 @@ void loop()
   switch (command)
   {
   case READ_RFID:
-       answer += read_rfid();
+       answer += getRFID();
        break;
   case READ_DIGIATL:
        answer =+ readDigital(pin) ? "1" : "0";
@@ -74,26 +74,6 @@ void loop()
        //char distanceValue[5];
        //sprintf(distanceValue,"%i",readUltrasound(pin));
        //answer =+ distanceValue;
-       break;
-  case READ_LEFT_ENCODER:
-       if(value<0){
-         char leftEncoderValue[7];
-         sprintf(leftEncoderValue,"%i",getLeftCount());
-         answer =+ leftEncoderValue;
-       }
-       else{
-         setLeftCount(value);
-       }
-       break;
-  case READ_RIGHT_ENCODER:
-       if(value<0){
-         char rightEncoderValue[7];
-         sprintf(rightEncoderValue,"%i",getRightCount());
-         answer =+ rightEncoderValue;
-       }
-       else{
-         setRightCount(value);
-       }
        break;
   case WRITE_NEO_PIXEL:
        //int redValue;

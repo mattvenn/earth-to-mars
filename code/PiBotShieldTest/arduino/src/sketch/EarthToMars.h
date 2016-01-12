@@ -21,25 +21,29 @@ void setupETM() {
     rfid_serial.begin(9600);
 }
 
-String read_rfid()
+String rfid = "";
+
+void checkRFID()
 {
-	String rfid = "not ready" + String(rfid_serial.available());
 	if(rfid_serial.available() >= 14)
 	{
 		//if not correct start bit, abort
 		if(rfid_serial.read() != 0x02)
 		{
 			rfid_serial.flush();
-			rfid = "bad start bit";
-			return rfid;
 		}
 
 		rfid = "";
 		for( int i = 0; i < 12; i ++ )
 			rfid += (char)rfid_serial.read();
+
 		//discard end bit
 		rfid_serial.read();
-	}
+    }
+}
+
+String getRFID()
+{
 	return rfid;
 }
 
