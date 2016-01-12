@@ -15,7 +15,7 @@ def populate():
     sample = Sample(team, 10, 20, 0.1, 0.2, 0.3, 0.4)
     db.session.add(sample)
 
-    question = Questions("what's up doc?", "carrots", "carrot.png")
+    question = Questions("what's up doc?", "carrots", "carrots.png")
     db.session.add(question)
 
     answer = Answers(question, "carrots?", team)
