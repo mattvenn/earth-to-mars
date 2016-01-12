@@ -8,12 +8,14 @@ from contextlib import closing
 from flask_admin.contrib.sqla import ModelView
 import time
 
-from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordField
+from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordField, FileField
 from wtforms import validators
 from flask_wtf import Form
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from mc.models import Teams, School, Sample, Answers, Questions, GroupGraph
+from mc.models import Teams, School, Sample, Answers, Questions, GroupGraph, Photo
 from graphing import submit_graph, update_group_graph
+from werkzeug import secure_filename
+import os
 
 class SecureView(ModelView):
     def is_accessible(self):
@@ -68,6 +70,21 @@ class AnswerForm(Form):
         self.answer = Answers(None, self.answer.data, self.team.data)
         return True
 
+class PhotoForm(Form):
+    
+    def get_teams():
+        return Teams.query.all()
+
+    team = QuerySelectField(query_factory=get_teams)
+
+    maxx = app.config['MAX_X']
+    maxy = app.config['MAX_Y']
+
+    x = IntegerField('X', [validators.NumberRange(min=0, max=maxx - 1)])
+    y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy - 1)])
+
+    photo = FileField(u'Image File')
+
 class SampleForm(Form):
     
     def get_teams():
@@ -84,8 +101,8 @@ class SampleForm(Form):
     maxx = app.config['MAX_X']
     maxy = app.config['MAX_Y']
 
-    x = IntegerField('X', [validators.NumberRange(min=0, max=maxx)])
-    y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy)])
+    x = IntegerField('X', [validators.NumberRange(min=0, max=maxx - 1)])
+    y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy - 1)])
 
 
 def get_group_id():
@@ -110,12 +127,12 @@ def mission_control():
     return render_template('mission_control.html', school_info=school, time_info=time_info, group_id=get_group_id())
 
 # tested
-@app.route('/show_samples')
+@app.route('/show/samples')
 def show_samples():
     samples = Sample.query.all()
     return render_template('show_samples.html', samples=samples)
 
-@app.route('/show_group_graph/<type>')
+@app.route('/show/graph/<type>')
 def show_group_graph(type):
     return render_template('show_group_graph.html', type=type, group_id=get_group_id())
 
@@ -221,3 +238,43 @@ def questions(question_id):
         return redirect(url_for('answers', question_id=question_id))
 
     return render_template('question.html', question=question, form=form)
+
+@app.route('/upload/photo', methods=['GET', 'POST'])
+def add_photo():
+    form = PhotoForm(request.form)
+    if form.validate_on_submit():
+        # validate file
+        file = request.files[form.photo.name]
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.static_folder, "photos", filename))
+
+        photo = Photo()
+        form.populate_obj(photo)
+        photo.image_path = filename
+        db.session.add(photo)
+        db.session.commit()
+
+        # update the panorama!!!!
+        # update_panorama(photo)
+
+        return render_template('photo_submitted.html', photo=photo)
+    return render_template('add_photo.html', form=form)
+
+@app.route('/show/photos')
+def show_photos():
+    maxx = app.config['MAX_X']
+    maxy = app.config['MAX_Y']
+    photos = [[None for y in range(maxy)] for x in range(maxx)]
+    for x in range(maxx):
+        for y in range(maxy):
+            photo = Photo.query.filter(Photo.x == x, Photo.y == y).first()
+            if photo:
+                photos[x][y] = photo
+
+    return render_template('show_photos.html', photos=photos)
+
+@app.route('/show/photo/<int:photo_id>')
+def show_photo(photo_id):
+    photo = Photo.query.get(photo_id)
+    return render_template('show_photo.html', photo=photo)
+

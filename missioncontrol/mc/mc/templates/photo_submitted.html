@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+  {% if photo %}
+  <img class="submit-photo" src="{{ url_for('static', filename='photos/%s' % photo.image_path) }}"> 
+  <div class="samples">
+  <table>
+  <tr>
+    <th>ID</th>
+    <th>X</th>
+    <th>Y</th>
+  </tr>
+  <tr>
+    <td>{{ photo.id }}</td>
+    <td>{{ photo.x }}</td>
+    <td>{{photo.y}}</td>
+  </tr>
+  </table>
+  {% else %}
+    <p>No photo!
+  {% endif %}
+{% endblock %}

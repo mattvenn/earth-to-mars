@@ -9,6 +9,9 @@ h2              { font-size: 1.2em; }
 .samples table {  border-collapse: collapse; }
 .samples th, td  { text-align: right; padding: 2px; border-left: 1px solid black;}
 
+.photos table  {  border-collapse: collapse; border: 1px solid black; } 
+.photos td  { border: none; padding: 0px; }
+
 .upload-sample      { font-size: 0.9em; border-bottom: 1px solid #ccc; }
 .upload-sample dl   { font-weight: bold; }
 .flash          { background: #cee5F5; padding: 0.5em;
@@ -18,6 +21,8 @@ h2              { font-size: 1.2em; }
 .mc-graph        { width: 24%; }
 .submit-graph    { width: 100%; }
 .group-graph    { width: 100%; }
+.submit-photo    { width: 100%; }
+.mini-photo    { width: 15px; }
 
 div.badge {
    content:url(/static/badge.png);

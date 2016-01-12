@@ -66,6 +66,15 @@ class GroupGraph(db.Model):
     __tablename__ = 'groupgraph'
     id = Column(Integer, primary_key=True)
 
+class Photo(db.Model):
+    __tablename__ = 'photos'
+    id = Column(Integer, primary_key=True)
+    image_path = Column(String(50), nullable=False)
+    x = Column(Integer(), nullable=False)
+    y = Column(Integer(), nullable=False)
+    team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)
+    team = relationship("Teams")
+
 class Sample(db.Model):
     __tablename__ = 'samples'
     id = Column(Integer, primary_key=True)
