@@ -145,7 +145,7 @@ def show_group_graph(type):
 # tested
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def add_sample():
-    form = SampleForm(request.form)
+    form = SampleForm()
 
     if form.validate_on_submit():
         sample = Sample()
@@ -233,7 +233,7 @@ def answers(question_id):
 # tested
 @app.route('/questions/<int:question_id>', methods=['GET', 'POST'])
 def questions(question_id):
-    form = AnswerForm(request.form)
+    form = AnswerForm()
     question = Questions.query.get(question_id)
 
     if form.validate_on_submit():
