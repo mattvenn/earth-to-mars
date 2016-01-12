@@ -56,7 +56,7 @@ class MCEmptyTest(TestCase):
         assert 'find that question' in rv.data
         
     def test_empty_samples(self):
-        rv = self.client.get("/show_samples")
+        rv = self.client.get("/show/samples")
         assert 'No samples here so far' in rv.data
 
     def test_admin_no_auth(self):
@@ -115,8 +115,9 @@ class MCPopulatedTest(TestCase):
         assert 'School: test' in rv.data
 
     def test_samples(self):
-        rv = self.client.get("/show_samples")
-        assert '10, 20 = 0.1 0.2 0.3 0.4' in rv.data
+        rv = self.client.get("/show/samples")
+        for s in [10,20,0.1,0.2,0.3,0.4]:
+            assert '<td>%s</td>' % s in rv.data
 
     def test_add_sample(self):
         sample = { 'x' : None, 'y' : None, 'team': None, 'type' : None, 'value' : None }
@@ -143,7 +144,7 @@ class MCPopulatedTest(TestCase):
         rv = self.client.get("/")
         assert 'Points: 1' in rv.data
 
-        rv = self.client.get("/show_samples")
+        rv = self.client.get("/show/samples")
         assert '0.7' in rv.data
 
     def test_answer_question(self):
@@ -180,8 +181,8 @@ class MCPopulatedTest(TestCase):
             {}), follow_redirects=True)
         assert json.loads(rv.data)['message'] == 'json needed'
 
-        rv = self.client.get("/show_samples")
-        assert 'class=samples' in rv.data
+        rv = self.client.get("/show/samples")
+        assert 'class="samples"' in rv.data
 
         # could test that min and max samples work
 
