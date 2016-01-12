@@ -8,9 +8,12 @@ from contextlib import closing
 from flask_admin.contrib.sqla import ModelView
 import time
 
-from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordField, FileField
+from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordField
+
 from wtforms import validators
 from flask_wtf import Form
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from mc.models import Teams, School, Sample, Answers, Questions, GroupGraph, Photo
 from graphing import submit_graph, update_group_graph
@@ -32,10 +35,8 @@ def shutdown_session(exception=None):
     db.session.remove()
 
 # tested
-def add_school_point():
-    school = School.query.order_by(School.timestamp.desc()).first()
-    school.points += 1
-    db.session.commit()
+def get_teams():
+    return Teams.query.all()
 
 class LoginForm(Form):
     username = TextField('Username', [validators.Required()])
@@ -57,8 +58,6 @@ class LoginForm(Form):
         return True
 
 class AnswerForm(Form):
-    def get_teams():
-        return Teams.query.all()
 
     team = QuerySelectField(query_factory=get_teams)
     answer = TextField('Answer', [validators.Required()])
@@ -70,11 +69,10 @@ class AnswerForm(Form):
         self.answer = Answers(None, self.answer.data, self.team.data)
         return True
 
+
+    
 class PhotoForm(Form):
     
-    def get_teams():
-        return Teams.query.all()
-
     team = QuerySelectField(query_factory=get_teams)
 
     maxx = app.config['MAX_X']
@@ -83,13 +81,13 @@ class PhotoForm(Form):
     x = IntegerField('X', [validators.NumberRange(min=0, max=maxx - 1)])
     y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy - 1)])
 
-    photo = FileField(u'Image File')
+    photo = FileField('image', validators=[
+            FileRequired(message="you must choose a photo"),
+            FileAllowed(['jpg', 'png'], message='only images allowed')
+            ])
 
 class SampleForm(Form):
     
-    def get_teams():
-        return Teams.query.all()
-
     team = QuerySelectField(query_factory=get_teams)
     types = app.config['SAMPLE_TYPES']
 
@@ -105,6 +103,13 @@ class SampleForm(Form):
     y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy - 1)])
 
 
+# tested
+def add_school_point():
+    school = School.query.order_by(School.timestamp.desc()).first()
+    school.points += 1
+    db.session.commit()
+
+# tested
 def get_group_id():
     try:
         group_id = GroupGraph.query.all()[-1].id
@@ -132,10 +137,12 @@ def show_samples():
     samples = Sample.query.all()
     return render_template('show_samples.html', samples=samples)
 
+# tested
 @app.route('/show/graph/<type>')
 def show_group_graph(type):
     return render_template('show_group_graph.html', type=type, group_id=get_group_id())
 
+# tested
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def add_sample():
     form = SampleForm(request.form)
@@ -241,12 +248,10 @@ def questions(question_id):
 
 @app.route('/upload/photo', methods=['GET', 'POST'])
 def add_photo():
-    form = PhotoForm(request.form)
+    form = PhotoForm()
     if form.validate_on_submit():
-        # validate file
-        file = request.files[form.photo.name]
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.static_folder, "photos", filename))
+        filename = secure_filename(form.photo.data.filename)
+        form.photo.data.save(os.path.join(app.static_folder, 'photos', filename))
 
         photo = Photo()
         form.populate_obj(photo)
@@ -254,10 +259,8 @@ def add_photo():
         db.session.add(photo)
         db.session.commit()
 
-        # update the panorama!!!!
-        # update_panorama(photo)
-
         return render_template('photo_submitted.html', photo=photo)
+
     return render_template('add_photo.html', form=form)
 
 @app.route('/show/photos')

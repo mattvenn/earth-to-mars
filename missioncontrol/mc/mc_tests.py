@@ -12,6 +12,7 @@ os.environ["DIAG_CONFIG_MODULE"] = "mc.config_test"
 
 from mc import app
 from mc import db
+from mc.views import get_group_id, add_school_point, get_teams
 
 
 class GraphingTest(unittest.TestCase):
@@ -41,12 +42,16 @@ class MCEmptyTest(TestCase):
     def setUp(self):
         db.init_app(self.app)
         with self.app.app_context():
+            db.drop_all()
             db.create_all()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
     
+    def test_empty_group_id(self):
+        assert get_group_id() == 0
+
     def test_empty_answers(self):
         rv = self.client.get("/answers/1")
         assert 'find an answer to that' in rv.data
@@ -54,7 +59,10 @@ class MCEmptyTest(TestCase):
     def test_empty_questions(self):
         rv = self.client.get("/questions/1")
         assert 'find that question' in rv.data
-        
+
+    def test_empty_teams(self):
+        assert len(get_teams()) == 0
+
     def test_empty_samples(self):
         rv = self.client.get("/show/samples")
         assert 'No samples here so far' in rv.data
@@ -88,6 +96,14 @@ class MCEmptyTest(TestCase):
     def logout(self):
         return self.client.get('/logout', follow_redirects=True)
 
+    def test_no_photos(self):
+        rv = self.client.get("/show/photos")
+        assert rv.data.count('blank.png') == 30 * 20
+
+    def test_no_photo(self):
+        rv = self.client.get("/show/photo/1")
+        assert 'No photo of that id' in rv.data
+        
 
 class MCPopulatedTest(TestCase):
 
@@ -105,6 +121,15 @@ class MCPopulatedTest(TestCase):
         db.session.remove()
         db.drop_all()
 
+    def test_school_points(self):
+        assert self.get_school_points() == 0
+        add_school_point()
+        assert self.get_school_points() == 1
+
+    def test_get_teams(self):
+        assert len(get_teams()) == 1
+        assert get_teams()[0].name == 'earth'
+    
     def get_school_points(self):
         school = School.query.order_by(School.timestamp.desc()).first()
         return school.points
@@ -192,6 +217,62 @@ class MCPopulatedTest(TestCase):
         assert json.loads(rv.data)['oxygen'] == 0
 
         assert self.get_school_points() == points + 1
+
+    def test_show_graph(self):
+        for type in app.config['SAMPLE_TYPES'].keys():
+            rv = self.client.get("/show/graph/" + type)
+            assert type in rv.data
+            assert '.png' in rv.data
+
+    """
+    def test_upload_2(self):
+        filename = "static/badge.png"
+
+#        with self.app.open_resource(filename) as fp:
+#        fp = self.app.open_resource(filename)
+        fp = open('mc/' + filename)
+        rv = self.client.post(
+            "/upload/photo",
+            data={'photo': (fp, 'test.png')}
+        )
+        assert 'Not a valid choice' in rv.data
+    """
+
+    def test_upload_photo(self):
+        filename = "mc/static/badge.png"
+        payload = {}
+        payload['x'] = 5
+        payload['y'] = 5
+        payload['team'] = 1
+        payload['photo'] = ( open(filename), 'test.png')
+
+        rv = self.client.post('/upload/photo', data = payload)
+
+        assert 'static/photos/test.png' in rv.data
+       
+    #https://github.com/lepture/flask-wtf/blob/master/tests/test_uploads.py
+    def test_upload_missing_photo(self):
+        payload = {}
+        payload['x'] = 6
+        payload['y'] = 6
+        payload['team'] = 1
+
+        rv = self.client.post('/upload/photo', data = payload)
+
+        assert 'you must choose a photo' in rv.data
+
+    def test_upload_wrong_filename(self):
+        filename = "mc/static/badge.png"
+        payload = {}
+        payload['x'] = 6
+        payload['y'] = 6
+        payload['team'] = 1
+        payload['photo'] = ( open(filename), 'test.pnx')
+
+
+        rv = self.client.post('/upload/photo', data = payload)
+
+        assert 'only images allowed' in rv.data
 
 
 if __name__ == '__main__':
