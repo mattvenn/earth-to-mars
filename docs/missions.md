@@ -45,9 +45,9 @@ that start with a `#`, they are to tell you what the program is doing:
 
 ~~~ { .python .numberLines }
 # these 3 lines import some libraries that the software uses
-from arduino import Commands, Arduino
+from pibot.arduino import Arduino
+from pibot.motors import Motors
 from time import sleep
-from motors import Motors
 
 # these 3 lines get the robot setup and ready to go
 board = Arduino()
@@ -115,9 +115,8 @@ look at the photo.
 This program shows how to find out how far something is away from the ultrasonic detector:
 
 ~~~ { .python .numberLines }
-from arduino import Commands
-from arduino import Arduino
-from ultrasound import Ultrasound
+from pibot.arduino import Arduino
+from pibot.ultrasound import Ultrasound
 from time import sleep
 
 board = Arduino()
@@ -162,11 +161,12 @@ After landing in the Mars yard, you'll press the button on the robot, so it know
 Here's how you wait for a button:
 
 ~~~ { .python .numberLines }
-from mission import Mission
+from pibot.mission import Mission
+mission = Mission()
 
 mission.waitForButton() #  turns on the red and waits for the button
 print("hello!")
-mission.end() # turns on the green led.
+mission.endMission() # turns on the green led.
 ~~~
 
 Write a short program that waits for the button and then drives the robot
@@ -183,7 +183,8 @@ data that you can look at later.
 Here's how you can save a measurement while the robot is in the Mars Yard, so you can read it later:
 
 ~~~ { .python .numberLines }
-from mission import Mission
+from pibot.mission import Mission
+mission = Mission()
 
 mission.deleteData()      # delete old data
 
@@ -192,6 +193,10 @@ sample = mission.takeSample(location)
 
 mission.saveData(sample)  # save the sample
 ~~~
+
+If you test this program on your robot while it's plugged in, you will get the
+'no location yet' exception. This is because the robot can only find its
+location when it's on the Mars Yard.
 
 To read the data afterwards you can open the `mission.txt` file by using the
 file manager and double clicking the file. The data is stored separated by
@@ -209,9 +214,8 @@ commas. So `mission.txt` might look like:
 Here's how you can take samples:
 
 ~~~ { .python .numberLines }
-from arduino import Commands
-from arduino import Arduino
-from mission import Mission
+from pibot.arduino import Arduino
+from pibot.mission import Mission
 
 mission = Mission()
 location = mission.getLocation()
@@ -224,8 +228,7 @@ Tips:
 * Test your program on your desk (you won't get a sample because the robot isn't
  on Mars yet!
 * Save your program as mission1.py
-* Make sure you save your sample and the location using the technique shown in training mission
- 6
+* Make sure you save your sample and the location using the technique shown in training mission 6
 * Use `mission.waitForButton()` so the program can be started in the Mars Yard
 * Start your program running
 * Unplug the keyboard, mouse and monitor before taking your robot to the launch
