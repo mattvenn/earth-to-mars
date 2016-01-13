@@ -2,9 +2,15 @@ import time
 import os
 import json
 import requests
-from arduino import Commands
-from arduino import Arduino
 
+pi = os.environ.get("NO_PI_TEST", True)
+if pi is True:
+    from arduino import Arduino
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BOARD)
+    RED_LED_GPIO = 26
+    GREEN_LED_GPIO = 29
+    BUTTON = 36
 
 data_file = "mission.txt"
 rfid_hash = "sample_data.json"
@@ -13,43 +19,34 @@ mc_url = "http://mission.control:5000"
 class Mission():
     
     # tested
-    def __init__(self, pi=True):
+    def __init__(self):
 
-        self.pi = pi
-        if self.pi:
+        if pi is True:
             self.board = Arduino()
             self.board.connect()
-            import RPi.GPIO as GPIO
-            GPIO.setmode(GPIO.BOARD)
-            RED_LED_GPIO = 26
-            GREEN_LED_GPIO = 29
-            BUTTON = 36
+            GPIO.setup(GREEN_LED_GPIO,GPIO.OUT)
+            GPIO.setup(RED_LED_GPIO,GPIO.OUT)
+            GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         # load the sample hash
         with open(rfid_hash) as fh:
             self.rfid_hash = json.load(fh)
 
-        if self.pi:
-            self.board = Arduino()
-            self.board.connect()
-            GPIO.setup(GREEN_LED_GPIO,GPIO.OUT)
-            GPIO.setup(RED_LED_GPIO,GPIO.OUT)
-            GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     # won't test
     def waitForButton(self):
-        if self.pi:
+        print pi
+        if pi is True:
             GPIO.output(GREEN_LED_GPIO,False)
             GPIO.output(RED_LED_GPIO,True)
-        print("waiting for button...")
-        if self.pi:
-            while GPIO.input(button) == False:
+            print("waiting for button...")
+            while GPIO.input(BUTTON) == False:
                 time.sleep(0.1)
             GPIO.output(RED_LED_GPIO,False)
 
     # won't test
     def endMission(self):
-        if self.pi:
+        if pi is True:
             GPIO.output(GREEN_LED_GPIO,True)
 
     # tested
@@ -81,9 +78,13 @@ class Mission():
     # won't test
     # fetches an RFID
     def getLocation(self):
-        if self.pi:
-            return self.board.sendCommand(Commands.READ_RFID,0,0)
-        return None
+        if pi is True:
+            rfid = self.board.sendCommand(Commands.READ_RFID,0,0)
+            # when I catalogued the RFIDs I missed the last char!
+            rfid = rfid[0:11]
+            if len(rfid) != 11:
+                raise Exception("no location yet")
+            return rfid
     
     # tested
     # indexes into the sample database with the RFID and returns sample as dict
@@ -91,7 +92,7 @@ class Mission():
         try:
             return self.rfid_hash[location]
         except KeyError:
-            raise Exception("unknown location")
+            raise Exception("unknown location [%s]" % location)
 
     # tested
     # uploads a sample dict with a team name (string)
@@ -124,8 +125,10 @@ if __name__ == '__main__':
     mission.waitForButton()	
 
     while True:
-        rfid = mission.getLocation()
-        rfid = rfid.strip()
-        if len(rfid) == 12:
-            print("rfid=%s" % rfid)
-        sleep(0.1)
+        try:
+            rfid = mission.getLocation()
+            sample = mission.takeSample(rfid)
+            print sample
+        except Exception as e:
+            print e
+        time.sleep(1.0)
