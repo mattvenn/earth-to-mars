@@ -1,3 +1,18 @@
+# The Mars Explorer Robot
+
+To use your robot, you'll need to make the following connections shown in the
+photo below:
+
+* microusb for charging the battery
+* hdmi for video
+* usb for keyboard and mouse
+
+# TODO photo here
+
+The first time the robot is plugged in you will see the computer loading on the
+screen. After a while you will see a login screen. The username is `pi` and the
+password is `raspberry`.
+
 # Training Missions
 
 The following training missions will get you prepared for the real missions.
@@ -9,7 +24,7 @@ To get started, double click on the Idle2 icon.
 The numbers on the left are line numbers and don't need to be typed in.
 The codes on the right are Python commands and they have to be copied exactly as written. Make sure you copy all the symbols, and that everything is in the correct case.
 
-In Idle, click `file -> new`. Type the following into the new window:
+In Idle, click `file -> new window`. Type the following into the new window:
 
 ~~~ { .python .numberLines }
 print("Earth to Mars!")
@@ -22,20 +37,25 @@ Then `click file -> save`. Save the file as `training0.py`. Then click `run -> r
 * Move forwards 10cm and back 10cm.
 * Programming concepts required: sequence.
 
-This program introduces you to the basic movements of the robot. Make a new file, then copy this program into the file:
+This program introduces you to the basic movements of the robot. Make a new
+file, then copy this program into the file. You don't need to copy the lines
+that start with a `#`, they are to tell you what the program is doing:
 
 ~~~ { .python .numberLines }
+# these 3 lines import some libraries that the software uses
 from arduino import Commands, Arduino
 from time import sleep
 from motors import Motors
 
+# these 3 lines get the robot setup and ready to go
 board = Arduino()
 board.connect()
 move = Motors()
 
+# the rest of the program shows how to move the robot around
 print("forward")
-move.forward(50)
-sleep(1)
+move.forward(50)  # 50 is the speed. It goes from 0 to 100
+sleep(1)  # 1 is the number of seconds to wait
 move.stop()
 
 sleep(1)
@@ -49,12 +69,15 @@ move.stop()
 
 Now save the file as `training1.py` and then run the program to see the robot move.
 
-## 2 - M for Mars
+How slow can you make the robot go?
 
-* Program the robot to trace out an M shape.
+## 2 - Turning
+
+* Program the robot to turn around
 * Programming concepts required: sequence.
 
-Modify your program to draw an M shape with the robot. Save it as `training2.py`. You'll need to know how to turn the motor. This is done by driving one motor forwards, and the other backwards:
+Modify your program to make the robot turn around by 180 degrees. Save it as
+`training2.py`. To turn the robot, you can drive one motor forwards, and the other backwards:
 
 ~~~ { .python .numberLines }
 print("turn")
@@ -64,35 +87,26 @@ sleep(1)
 move.stop()
 ~~~
 
-## 3 - Timelapse
+## 3 - Photo
 
-* Use the robot’s camera to take a photo every few seconds.
-* Programming concepts required: loops.
+* Use the robot’s camera to take a photo
 
-This program uses a loop to print out the numbers 1 to 10:
-
-~~~ { .python .numberLines }
-num = 0
-while num < 10:
-    print(num)
-    num = num + 1
-~~~
-
-And this program takes a photo, saving the output to a numbered file:
+This program takes a photo, saving the output to a file:
 
 ~~~ { .python .numberLines }
 import picamera
 
-num = 0
 with picamera.PiCamera() as camera:
     camera.resolution = (1024, 768)
-    time.sleep(2)
-    camera.capture("%03d.jpg" % num) 
+    camera.capture("photo.jpg") 
 ~~~
 
-## 4 - Obstacle avoidance
+Write a program that can take a photo of your team and use the file browser to
+look at the photo.
 
-TODO ultrasound needs testing
+\ ![file browser](filemanager.png)
+
+## 4 - Obstacle avoidance
 
 * Use the robot’s ultrasonic detectors to stop the robot hitting a wall.
 * Programming concepts required: conditionals.
@@ -139,160 +153,123 @@ if distance < 50:
 
 All the training missions have been completed with the robot on the desk in front of you. When your robot is in the Mars yard, you won't have access to it.
 
-After landing in the Mars yard, the button on the robot will be pressed, so it knows to start the mission. 
+After landing in the Mars yard, you'll press the  button on the robot, so it knows to start the mission. 
 
 Here's how you wait for a button:
 
 ~~~ { .python .numberLines }
-import mission
+from mission import Mission
 
-mission.wait_for_button() #  turns on the LED and waits for the button
+mission.waitForButton() #  turns on the red and waits for the button
 print("hello!")
+mission.end() # turns on the green led.
 ~~~
 
-Write a short program that waits for the button and then drives the robot forward. 
+Write a short program that waits for the button and then drives the robot
+forward. Copy the code that moves the robot from a previous training mission.
 
 ## 6 - Saving and reading transmissions
 
-* Take a temperature sample and send the data. Then receive the data and check it’s correct.
+* Take a sample and send the data. Then receive the data and check it’s correct.
 * Programming concepts required: data
 
-After your robot has completed a mission, it will probably need to save some data that you can look at later. The data might be a photo, or it might be a temperature or a gas measurement.
+After your robot has completed a mission, it will probably need to save some
+data that you can look at later. 
 
 Here's how you can save a measurement while the robot is in the Mars Yard, so you can read it later:
 
 ~~~ { .python .numberLines }
-import mission
+from mission import Mission
 
-data = 10.5
-mission.delete_data(data)  # delete old data
-mission.save_data(data)  # save some new data into a file called mission.txt
+mission.deleteData()      # delete old data
+
+location = mission.getLocation() 
+sample = mission.takeSample(location)
+
+mission.saveData(sample)  # save the sample
 ~~~
 
-To read the data afterwards you can open the `mission.txt` file by using the file manager and double clicking the file.
+To read the data afterwards you can open the `mission.txt` file by using the
+file manager and double clicking the file. The data is stored separated by
+commas. So `mission.txt` might look like:
+
+    {"temperature": 200.0, "oxygen": 0.06, "humidity": 100.0, "y": 16, "x": 10, "methane": 0.03}
 
 # Mars Missions
 
-## 1 - Drive to a location and return.
+## 1 - Drive to a location, take a sample.
 
-* Difficulty: 1/5
-* Curriculum links: use a sequence of instructions to program a computer. Use two or more programming languages, at least one of which is textual, to solve a variety of computational problems.
-* STEM links: engineering
-
-The training missions should give you enough to get going on your first mission. 
-
-Tips:
-
-* Test your program on your desk.
-* Save your program as mission1.py
-* Use `mission.wait_for_button()` so the program can be started in the Mars Yard
-* Start your program running
-* Unplug the keyboard, mouse and monitor before taking your robot to the launch location.
-
-How do you think scientists get the real Mars robot to start a new mission?
-
-## 2 - Drive to a location, take a sample.
-
-* Sample consists of: H2, temperature, humidity and location.
+* A sample consists of: Methane, Oxygen, Temperature and Humidity.
 * Difficulty: 2/5
-* Curriculum links: can analyse problems in computational terms
-* STEM links: engineering, science
 
 Here's how you can take samples:
 
 ~~~ { .python .numberLines }
 from arduino import Commands
 from arduino import Arduino
-from etm import ETMSensors
+from mission import Mission
 
-sensors = ETMSensors()
-
-h2 = sensors.getH2()
-temp = sensors.getTemp()
-humidity = sensors.getHumidity()
+mission = Mission()
+location = mission.getLocation()
+sample = mission.takeSample(location)
+print(sample)
 ~~~
 
-To find your location, you need to point the camera straight up and take a photo. By looking at the number in the middle of the photo you can determine your location.
+Tips:
 
-You already know how to take a photo, here's how to aim the camera:
+* Test your program on your desk (you won't get a sample because the robot isn't
+ on Mars yet!
+* Save your program as mission1.py
+* Make sure you save your sample and the location using the technique shown in training mission
+ 6
+* Use `mission.waitForButton()` so the program can be started in the Mars Yard
+* Start your program running
+* Unplug the keyboard, mouse and monitor before taking your robot to the launch
+* Press the button once the robot is in the Mars Yard
 
-~~~ { .python .numberLines }
-TODO servo needs testing
-~~~
+Given that Mars doesn't have a GPS system, how do you think the real Mars robot
+works out its position? 
 
-Given that Mars doesn't have a GPS system, how do you think the real Mars robot works out its position? 
+Use the Midori web browser to answer the question at `http://mission.control/questions/1` 
 
-## 3 - Upload sample data to group database.
+\ ![browser](web_browser.jpg)
 
-* Using sample data from activity 2, upload to a projected map of overlaid data. The more teams that complete this mission, the clearer picture will be of where signs of life could be found.
+## 2 - Upload sample data to group database.
+
+* Using sample data from activity 1, upload your data to mission control. The more teams that complete this mission, the clearer picture will be of where signs of life could be found.
 * Difficulty: 2/5
-* Curriculum links: undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users.
-* STEM links: science, maths
 
-If your previous mission was a success, you will have a photo and some data in `mission.txt`.
+If your previous mission was a success, you will have some data in `mission.txt`.
 
-Double click the photo and work out the number that's closest to the centre, this is your position number.
 Look at the contents of `mission.txt`. To upload your samples to the group
 database, open the web browser and go to `http://mission.control/upload/sample`.
 
 Enter your location and sample values into the fields and then press `upload`.
 
-You can see the results of all the data on the big mission control screen, or go to `http://mission.control`. Where do you think the best places are to search for life? Why?
+You can see the results of all the data on the big mission control screen, or go
+to `http://mission.control`. Where do you think the best places are to search
+for life? Why? 
 
-## 4 - Enter an area of shadow and return.
+Answer the question at `http://mission.control/questions/2`
 
-* Explore dark area and return to sunlight for solar battery charging.
-* Difficulty: 3/5
-* Curriculum links: can evaluate and apply information technology, including new or unfamiliar technologies, analytically to solve problems
-* STEM links: engineering
-
-The Mars rover charges its batteries using solar panels. This makes going into dark places dangerous, because it could get stuck if the batteries get flat.
-
-In this mission, you'll use the camera to find somewhere dark, then drive somewhere light to charge your batteries.
-
-You already know how to take a photo, this code shows how to process the image
-to get a value between completely dark (0) and completely white (255). It also
-adds to your knowledge about `conditionals`.
-
-~~~ { .python .numberLines }
-import mission
-import picamera
-
-with picamera.PiCamera() as camera:
-    camera.resolution = (1024, 768)
-    time.sleep(2)
-    camera.capture("image.jpg") 
-
-value = mission.process_image("image.jpg")
-
-if value < 50:
-    print("dark")
-elif value > 150:
-    print("light")
-else:
-    print("medium")
-~~~
-
-How long do you think the real robot's batteries last?
-
-## 5 - Find an unknown obstacle using distance sensors and take a photo
+## 3 - Find an unknown obstacle using distance sensors and take a photo
 
 * Difficulty: 5/5
-* Curriculum links: design, use and evaluate computational abstractions that model the state and behaviour of real-world problems and physical systems. Understand several key algorithms that reflect computational thinking
-* STEM links: engineering, maths.
 
 Use your ultrasound sensor to detect where the edges of the Mars Yard are. Drive
-to 20cm away and take a photo pointing forwards, and one upwards for location.
+to 20cm away and take a photo pointing forwards. Use your skills to store the
+robot's location when the photo was taken.
 
-When your robot returns, work out the location from the upwards image and upload
-the photo to `http://mission.control/upload/photo`.
+When your robot returns, upload the photo to `http://mission.control/upload/photo`.
 
 Mission control will build a panorama of the images as more are uploaded.
 
 How many photos do you think the real robot takes in a day? How many of those do
-you think get sent back to Earth for analysis by scientists?
+you think get sent back to Earth for analysis by scientists? 
 
-## 6 - Averaging
+Answer the question at `http://mission.control/questions/4`
+
+## 4 - Averaging
 
 * Single samples are often not accurate, so often multiple samples are taken and then averaged. Write a program that takes averages of your samples.
 * Difficulty: 4/5
@@ -305,60 +282,91 @@ Tips:
 * Repeat the loop
 * After the loop, divide the total by your number (10 in this case).
 
+Here's how you can write a loop that does something 10 times:
+
+~~~ { .python .numberLines }
+num = 0             # make a variable called num
+while num < 10:     # while num is less than 10
+    print(num)      # print it
+    num = num + 1   # add one to num
+~~~
+
+The part of the loop that is repeated has been indented. This should
+automatically happen after you type the `:` character.
+
 The more samples you take, the more accurate the measurement.
 
 How many samples do you think you should take for temperature, humidity and
 hydrogen? Why?
 
-## 7 - Multi sample
+Answer the question at `http://mission.control/questions/4`
+
+## 5 - Multi sample
 
 * Program a route for the robot to take, and take many samples along the route. Store all the samples along with their locations. At mission control, upload all the samples.
 * Difficulty: 5/5
 
-If you're sampling multiple sensors lots of times, you probably want to split the data up into separate files. That way we can write a program to upload them all to mission control automatically.
-
-Before if you had some data in a variable called `data`, you could use `mission.save_data(data)` to save the data in a file called `mission.txt`.
-
-If you pass another parameter called `file`, you can get `mission.save` to save the data into separate files:
-
-~~~ { .python .numberLines }
-h2 = sensors.getH2()
-temp = sensors.getTemp()
-humidity = sensors.getHumidity()
-mission.save(h2, file="h2.txt")
-mission.save(temp, file="temp.txt")
-mission.save(humidity, file="humidity.txt")
-~~~
-
-This will result in 3 separate files, all with their own data.
+If you're sampling multiple sensors lots of times, you probably won't want to
+upload all the data manually. We will write a program to upload all the data
+automatically.
 
 Tips:
 
-* For each sample, take a numbered photograph of the location map.
+* For each sample, use 
 * When the robot returns, you'll need to upload each sample with its location.
 
-For our automatic uploading program, we need a new file that contains all the locations of all the samples.
-
-Create a new file called `locations.txt`. Go through each photo and write the central number down in the file.
-
-Check that all your files have the same number of lines. 
-
-This program shows how you could upload all your temperatures:
+This program shows how you could print all your samples:
 
 ~~~ { .python .numberLines }
-# read all the temperatures into a list called temps
-with open("temperatures.txt") as fh:
-    temps = fh.readlines()
+# read all the samples into a list called data
+data = mission.loadData()
 
-# read all the locations into a list called locations
-with open("locations.txt") as fh:
-    locations = fh.readlines()
-
-for temp, loc in zip(temps, locations)
-    mission.upload(type="temp", data=temp, location=loc)
+# go through each sample the robot took and print it out
+for sample in data:
+    print(sample)
 ~~~
 
-Adapt this program to upload all your samples.
+
+We can now use a new function called `uploadSample()` that will upload each sample to the group database.
+
+Here's how you can use it (imagine your team name is 'Earth'):
+
+    mission.uploadSample(sample, 'Earth')
+
+Adapt this program to upload all your samples automatically.
+
+Do you think the robot sends back all its samples or just some of them. Why?
+
+Answer the question at `http://mission.control/questions/5`
+
+## 6 - Process data
+
+* Write a program that downloads all the data for a measurement and make an
+ average.
+* Difficulty: 5/5
+
+There should be a lot of samples now uploaded to Mission Control. It would be
+good to know the average amounts of each type of sample.
+
+You can use the following to download all the data for a given sample:
+
+~~~ { .python .numberLines }
+# fetch all the samples
+samples = mission.getAllSamples()
+
+# samples is a type of variable called a list, we can loop through it like this:
+for sample in samples:
+    # print it out
+    print(sample)
+
+    # print just the methane amount
+    print(sample['methane'])
+~~~
+
+Adapt the program to print out the total number of samples, and the average of
+each type of sample.
 
 If the robot sends back 10,000 samples, do you think scientists look at them all
 individually or use a computer to analyse them? Why?
+
+Answer the question at `http://mission.control/questions/6`
