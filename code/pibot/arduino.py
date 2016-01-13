@@ -1,4 +1,6 @@
 import RPi.GPIO as GPIO
+GPIO.setwarnings(False)
+
 import serial
 from time import sleep
 
