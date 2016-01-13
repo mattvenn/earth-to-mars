@@ -7,7 +7,7 @@ photo below:
 * hdmi for video
 * usb for keyboard and mouse
 
-# TODO photo here
+TODO photo here
 
 The first time the robot is plugged in you will see the computer loading on the
 screen. After a while you will see a login screen. The username is `pi` and the
@@ -18,6 +18,8 @@ password is `raspberry`.
 The following training missions will get you prepared for the real missions.
 
 To get started, double click on the Idle2 icon.
+
+TODO where to write the code for the missions?
 
 ## 0 - Hello Python!
 
@@ -64,7 +66,6 @@ print("backward")
 move.backward(50)
 sleep(1)
 move.stop()
-
 ~~~
 
 Now save the file as `training1.py` and then run the program to see the robot move.
@@ -134,6 +135,7 @@ Here's a way of making a loop that never ends:
 ~~~ { .python .numberLines }
 while True:
     # do something
+    print("hello!")
 ~~~
 
 To stop the loop, choose the window titled 'shell' and press `control` and `c` at the same time.
@@ -151,9 +153,11 @@ if distance < 50:
 
 ## 5 - Starting a mission with the button
 
-All the training missions have been completed with the robot on the desk in front of you. When your robot is in the Mars yard, you won't have access to it.
+All the training missions have been completed with the robot on the desk in
+front of you. When your robot is in the Mars yard, you won't have the keyboard
+and mouse and monitor plugged in. 
 
-After landing in the Mars yard, you'll press the  button on the robot, so it knows to start the mission. 
+After landing in the Mars yard, you'll press the button on the robot, so it knows to start the mission. 
 
 Here's how you wait for a button:
 
@@ -326,10 +330,13 @@ for sample in data:
     print(sample)
 ~~~
 
+You can now use a function called `uploadSample()` that will upload each sample
+to the group database. It takes 2 parameters:
 
-We can now use a new function called `uploadSample()` that will upload each sample to the group database.
+* the sample you want to upload,
+* the name of your team.
 
-Here's how you can use it (imagine your team name is 'Earth'):
+So if your team name was `Earth` here's how you could use it:
 
     mission.uploadSample(sample, 'Earth')
 
