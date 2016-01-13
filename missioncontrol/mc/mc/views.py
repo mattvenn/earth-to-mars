@@ -180,6 +180,7 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
+# tested
 @app.route('/api/team/<name>')
 def api_get_team_by_name(name):
     name = name.lower()

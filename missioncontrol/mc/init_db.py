@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 os.environ["DIAG_CONFIG_MODULE"] = "mc.config_real"
 from mc import app
@@ -6,13 +7,14 @@ from mc.models import Teams, School, Sample, Questions, Answers, GroupGraph
 from mc import graphing
 
 def populate():
-    team = Teams('earth')
+    team = Teams('Earth')
     db.session.add(team)
 
     school = School('test')
     db.session.add(school)
 
-    sample = Sample(team, 10, 20, 0.1, 0.2, 0.3, 0.4)
+    # not validated, so be careful!
+    sample = Sample(team, 10, 20, 0.1, 0.1, 0.1, 0.1)
     db.session.add(sample)
 
     question = Questions("what's up doc?", "carrots", "carrots.png")
