@@ -8,17 +8,17 @@ from arduino import Arduino
 
 data_file = "mission.txt"
 rfid_hash = "sample_data.json"
+mc_url = "http://mission.control:5000"
 
 class Mission():
     
     # tested
     def __init__(self, pi=True):
 
-        self.board = Arduino()
-        self.board.connect()
-
         self.pi = pi
         if self.pi:
+            self.board = Arduino()
+            self.board.connect()
             import RPi.GPIO as GPIO
             GPIO.setmode(GPIO.BOARD)
             RED_LED_GPIO = 26
@@ -88,16 +88,26 @@ class Mission():
         except KeyError:
             raise Exception("unknown location")
 
-    # TODO
-    def uploadSample(self, sample, team=None):
-        sample['team'] = '1'
+    # tested
+    def uploadSample(self, sample, team):
+        # fetch team ID from nane
+        r = requests.get(mc_url + '/api/team/' + team)
+        if r.status_code == 400:
+            raise Exception(r.text)
+
+        team_id = json.loads(r.text)['id']
         sample['methane'] = sample['methane']
         sample['humidity'] = sample['humidity']
         sample['oxygen' ] = sample['oxygen']
         sample['temperature'] = sample['temperature'] 
-        print(sample)
-        r = requests.post('http://mission.control:5000/api/sample', json=sample)
-        print r.text
+        sample['team'] = str(team_id)
+        r = requests.post(mc_url + '/api/sample', json=sample)
+        if r.status_code == 400:
+            raise Exception(r.text)
+
+        new_sample = json.loads(r.text)
+        print("uploaded sample")
+        return new_sample
 
 
 if __name__ == '__main__':

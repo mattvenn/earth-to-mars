@@ -48,12 +48,32 @@ class TestMission(unittest.TestCase):
         assert type(saved_samples) is list
         assert saved_samples[0] == sample
 
-    # TODO
     def test_upload_data(self):
         m = Mission(pi=False)
         location_rfid = m.rfid_hash.keys()[0]
         sample = m.takeSample(location_rfid)
-        m.uploadSample(sample) #, team='earth')
+        new_sample = m.uploadSample(sample, team='EaRtH')
+        for k in ['temperature', 'humidity', 'oxygen', 'methane', 'x', 'y']:
+            assert new_sample[k] == sample[k]
+
+    def test_upload_bad_team(self):
+        m = Mission(pi=False)
+        location_rfid = m.rfid_hash.keys()[0]
+        sample = m.takeSample(location_rfid)
+        with self.assertRaises(Exception) as e:
+            m.uploadSample(sample, team='arth')
+
+        assert 'no team of that name found' in str(e.exception)
+
+    def test_upload_bad_data(self):
+        m = Mission(pi=False)
+        location_rfid = m.rfid_hash.keys()[0]
+        sample = m.takeSample(location_rfid)
+        sample['oxygen'] = 1000
+        with self.assertRaises(Exception) as e:
+            m.uploadSample(sample, team='earth')
+
+        assert 'must be between' in str(e.exception)
         
 
 if __name__ == '__main__':
