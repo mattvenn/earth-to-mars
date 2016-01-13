@@ -141,7 +141,7 @@ class MCPopulatedTest(TestCase):
 
     def test_samples(self):
         rv = self.client.get("/show/samples")
-        for s in [10,20,0.1,0.2,0.3,0.4]:
+        for s in [10,20,0.1,0.1,0.1,0.1]:
             assert '<td>%s</td>' % s in rv.data
 
     def test_add_sample(self):
@@ -159,10 +159,10 @@ class MCPopulatedTest(TestCase):
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'must be between 0 and 1' in rv.data
 
-        sample['methane'] = 0.7
-        sample['oxygen'] = 0.7
-        sample['temperature'] = 0.7
-        sample['humidity'] = 0.7
+        sample['methane'] = 0.1
+        sample['oxygen'] = 0.1
+        sample['temperature'] = 0.1
+        sample['humidity'] = 0.1
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'sample logged' in rv.data
 
@@ -170,7 +170,7 @@ class MCPopulatedTest(TestCase):
         assert 'Points: 1' in rv.data
 
         rv = self.client.get("/show/samples")
-        assert '0.7' in rv.data
+        assert '0.1' in rv.data
 
     def test_answer_question(self):
         points = self.get_school_points()
@@ -195,9 +195,9 @@ class MCPopulatedTest(TestCase):
         assert json.loads(rv.data)['x'] == 10
         assert json.loads(rv.data)['y'] == 20
         assert json.loads(rv.data)['methane'] == 0.1
-        assert json.loads(rv.data)['oxygen'] == 0.2
-        assert json.loads(rv.data)['temperature'] == 0.3
-        assert json.loads(rv.data)['humidity'] == 0.4
+        assert json.loads(rv.data)['oxygen'] == 0.1
+        assert json.loads(rv.data)['temperature'] == 0.1
+        assert json.loads(rv.data)['humidity'] == 0.1
        
     def test_add_samples_api(self):
         points = self.get_school_points()
@@ -217,6 +217,13 @@ class MCPopulatedTest(TestCase):
         assert json.loads(rv.data)['oxygen'] == 0
 
         assert self.get_school_points() == points + 1
+
+    def test_get_all_samples(self):
+        rv = self.client.get("/api/samples")
+        samples = json.loads(rv.data)['samples']
+        assert len(samples) == 1
+        assert samples[0]['temperature'] == 0.1
+        assert samples[0]['humidity'] == 0.1
 
     def test_team_api(self):
         rv = self.client.get("/api/team/xx")
@@ -267,7 +274,6 @@ class MCPopulatedTest(TestCase):
         payload['y'] = 6
         payload['team'] = 1
         payload['photo'] = ( open(filename), 'test.pnx')
-
 
         rv = self.client.post('/upload/photo', data = payload)
 
