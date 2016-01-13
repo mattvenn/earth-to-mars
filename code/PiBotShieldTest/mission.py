@@ -5,7 +5,7 @@ import requests
 
 pi = os.environ.get("NO_PI_TEST", True)
 if pi is True:
-    from arduino import Arduino
+    from arduino import Arduino, Commands
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BOARD)
     RED_LED_GPIO = 26
@@ -35,7 +35,6 @@ class Mission():
 
     # won't test
     def waitForButton(self):
-        print pi
         if pi is True:
             GPIO.output(GREEN_LED_GPIO,False)
             GPIO.output(RED_LED_GPIO,True)
