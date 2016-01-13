@@ -127,8 +127,8 @@ class MCPopulatedTest(TestCase):
         assert self.get_school_points() == 1
 
     def test_get_teams(self):
-        assert len(get_teams()) == 1
-        assert get_teams()[0].name == 'Earth'
+        assert len(get_teams()) == 15
+        assert get_teams()[0].name == 'Aurora'
     
     def get_school_points(self):
         school = School.query.order_by(School.timestamp.desc()).first()
@@ -229,12 +229,12 @@ class MCPopulatedTest(TestCase):
         rv = self.client.get("/api/team/xx")
         assert 'no team of that name found' in rv.data
 
-        rv = self.client.get("/api/team/earth")
-        assert json.loads(rv.data)['name'] == 'Earth'
+        rv = self.client.get("/api/team/aurora")
+        assert json.loads(rv.data)['name'] == 'Aurora'
         assert json.loads(rv.data)['id'] == 1
 
-        rv = self.client.get("/api/team/EaRtH")
-        assert json.loads(rv.data)['name'] == 'Earth'
+        rv = self.client.get("/api/team/aUroRa")
+        assert json.loads(rv.data)['name'] == 'Aurora'
         assert json.loads(rv.data)['id'] == 1
         
     def test_show_graph(self):
