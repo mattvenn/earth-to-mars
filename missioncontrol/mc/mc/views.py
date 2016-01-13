@@ -192,7 +192,14 @@ def api_get_team_by_name(name):
     raise InvalidUsage("no team of that name found")
 
 # tested
-@app.route('/api/sample/<int:sample_id>', methods=['GET'])
+@app.route('/api/samples')
+def api_get_all_samples():
+    samples = Sample.query.all()
+    data = { 'samples' : [sample.serialise() for sample in samples]}
+    return jsonify(data)
+
+# tested
+@app.route('/api/sample/<int:sample_id>')
 def api_get_sample(sample_id):
     sample = Sample.query.get(sample_id)
     if not sample:
