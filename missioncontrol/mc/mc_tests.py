@@ -128,7 +128,7 @@ class MCPopulatedTest(TestCase):
 
     def test_get_teams(self):
         assert len(get_teams()) == 1
-        assert get_teams()[0].name == 'earth'
+        assert get_teams()[0].name == 'Earth'
     
     def get_school_points(self):
         school = School.query.order_by(School.timestamp.desc()).first()
@@ -184,7 +184,7 @@ class MCPopulatedTest(TestCase):
 
         rv = self.client.post('/questions/1', data=answer, follow_redirects=True)
         assert 'carrots' in rv.data
-        assert 'carrot.png' in rv.data
+        assert 'carrots.png' in rv.data
         assert self.get_school_points() == points + 1
 
 
@@ -218,25 +218,24 @@ class MCPopulatedTest(TestCase):
 
         assert self.get_school_points() == points + 1
 
+    def test_team_api(self):
+        rv = self.client.get("/api/team/xx")
+        assert 'no team of that name found' in rv.data
+
+        rv = self.client.get("/api/team/earth")
+        assert json.loads(rv.data)['name'] == 'Earth'
+        assert json.loads(rv.data)['id'] == 1
+
+        rv = self.client.get("/api/team/EaRtH")
+        assert json.loads(rv.data)['name'] == 'Earth'
+        assert json.loads(rv.data)['id'] == 1
+        
     def test_show_graph(self):
         for type in app.config['SAMPLE_TYPES'].keys():
             rv = self.client.get("/show/graph/" + type)
             assert type in rv.data
             assert '.png' in rv.data
 
-    """
-    def test_upload_2(self):
-        filename = "static/badge.png"
-
-#        with self.app.open_resource(filename) as fp:
-#        fp = self.app.open_resource(filename)
-        fp = open('mc/' + filename)
-        rv = self.client.post(
-            "/upload/photo",
-            data={'photo': (fp, 'test.png')}
-        )
-        assert 'Not a valid choice' in rv.data
-    """
 
     def test_upload_photo(self):
         filename = "mc/static/badge.png"

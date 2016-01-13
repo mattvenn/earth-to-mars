@@ -180,6 +180,16 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
+@app.route('/api/team/<name>')
+def api_get_team_by_name(name):
+    name = name.lower()
+    teams = get_teams()
+    for team in teams:
+        if team.name.lower() == name:
+            return jsonify(team.serialise())
+
+    raise InvalidUsage("no team of that name found")
+
 # tested
 @app.route('/api/sample/<int:sample_id>', methods=['GET'])
 def api_get_sample(sample_id):
