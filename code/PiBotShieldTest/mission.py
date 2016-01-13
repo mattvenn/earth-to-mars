@@ -106,7 +106,7 @@ class Mission():
             raise Exception(r.text)
 
         new_sample = json.loads(r.text)
-        print("uploaded sample")
+        print("uploaded sample %d" % new_sample['id'])
         return new_sample
 
 

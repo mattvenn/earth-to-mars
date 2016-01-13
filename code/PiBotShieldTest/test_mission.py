@@ -74,7 +74,22 @@ class TestMission(unittest.TestCase):
             m.uploadSample(sample, team='earth')
 
         assert 'must be between' in str(e.exception)
-        
+
+    #@unittest.skip("skipping random data")
+    def test_upload_random_data(self):
+        from random import sample
+        m = Mission(pi=False)
+        for rfid in sample(m.rfid_hash,200):
+            sample = m.takeSample(rfid)
+            m.uploadSample(sample, team='earth')
+
+    @unittest.skip("skipping all data")
+    def test_upload_all_data(self):
+        m = Mission(pi=False)
+        for rfid in m.rfid_hash:
+            sample = m.takeSample(rfid)
+            m.uploadSample(sample, team='earth')
+
 
 if __name__ == '__main__':
     unittest.main()
