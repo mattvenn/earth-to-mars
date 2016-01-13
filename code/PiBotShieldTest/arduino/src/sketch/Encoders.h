@@ -1,7 +1,7 @@
 #ifndef ENCODERS_H
 #define ENCODERS_H
 
-#include "Encoder.h"
+//#include "Encoder.h"
 
 #define RIGHT_ENCODER_A A0//new A0// old A0  //prev A1
 #define RIGHT_ENCODER_B 3// new 3//old A1  //prev A0

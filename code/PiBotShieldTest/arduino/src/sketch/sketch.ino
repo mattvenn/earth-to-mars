@@ -1,13 +1,10 @@
 #include "Arduino.h"
-//#include <DHT.h>
-//#include <Encoder.h>
-//#include <Adafruit_NeoPixel.h>
+#include <Encoder.h>
 
 #include "Commands.h"
-//#include "Encoders.h"
-//#include "NeoPixel.h"
+#include "Encoders.h"
 #include "EarthToMars.h"
-//#include "Ultrasound.h"
+#include "Ultrasound.h"
 
 #define MAX_MESSAGE_LENGTH 50
 #define MAX_RESPONSE_LENGTH 20
@@ -21,8 +18,9 @@ void setup()
   Serial.begin(115200);
   // reserve 200 bytes for the inputMessage:
   inputMessage.reserve(MAX_MESSAGE_LENGTH);
-  //setupNeoPixel();
+  encodersInit();
   setupETM();
+
 }
 
 void loop()
@@ -71,9 +69,29 @@ void loop()
        writePWM(pin,value);
        break; 
   case READ_ULTRASOUND:
-       //char distanceValue[5];
-       //sprintf(distanceValue,"%i",readUltrasound(pin));
-       //answer =+ distanceValue;
+       char distanceValue[5];
+       sprintf(distanceValue,"%i",readUltrasound(pin));
+       answer =+ distanceValue;
+       break;
+  case READ_LEFT_ENCODER:
+       if(value<0){
+         char leftEncoderValue[7];
+         sprintf(leftEncoderValue,"%i",getLeftCount());
+         answer =+ leftEncoderValue;
+       }
+       else{
+         setLeftCount(value);
+       }
+       break;
+  case READ_RIGHT_ENCODER:
+       if(value<0){
+         char rightEncoderValue[7];
+         sprintf(rightEncoderValue,"%i",getRightCount());
+         answer =+ rightEncoderValue;
+       }
+       else{
+         setRightCount(value);
+       }
        break;
   case WRITE_NEO_PIXEL:
        //int redValue;
