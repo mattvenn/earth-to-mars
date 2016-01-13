@@ -75,7 +75,7 @@ class TestMission(unittest.TestCase):
 
         assert 'must be between' in str(e.exception)
 
-    #@unittest.skip("skipping random data")
+    @unittest.skip("skipping random data")
     def test_upload_random_data(self):
         from random import sample
         m = Mission(pi=False)
@@ -90,6 +90,14 @@ class TestMission(unittest.TestCase):
             sample = m.takeSample(rfid)
             m.uploadSample(sample, team='earth')
 
+    
+    def test_get_all_samples(self):
+        m = Mission(pi=False)
+        samples = m.getAllSamples()
+        assert type(samples) == list
+        assert len(samples) > 0
+        assert type(samples[0]) == dict
+        assert samples[0].has_key('temperature')
 
 if __name__ == '__main__':
     unittest.main()

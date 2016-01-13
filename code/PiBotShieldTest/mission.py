@@ -60,11 +60,14 @@ class Mission():
             pass
 
     # tested
+    # stores a dict as json on the disk
+    # appends to the data file
     def saveData(self, sample):
         with open(data_file,'a') as fh:
             fh.write(json.dumps(sample) + "\n")
 
     # tested
+    # returns a list of dicts
     def loadData(self):
         data = []
         try:
@@ -76,12 +79,14 @@ class Mission():
         return data
 
     # won't test
+    # fetches an RFID
     def getLocation(self):
         if self.pi:
             return self.board.sendCommand(Commands.READ_RFID,0,0)
         return None
     
     # tested
+    # indexes into the sample database with the RFID and returns sample as dict
     def takeSample(self, location):
         try:
             return self.rfid_hash[location]
@@ -89,6 +94,7 @@ class Mission():
             raise Exception("unknown location")
 
     # tested
+    # uploads a sample dict with a team name (string)
     def uploadSample(self, sample, team):
         # fetch team ID from nane
         r = requests.get(mc_url + '/api/team/' + team)
@@ -96,11 +102,9 @@ class Mission():
             raise Exception(r.text)
 
         team_id = json.loads(r.text)['id']
-        sample['methane'] = sample['methane']
-        sample['humidity'] = sample['humidity']
-        sample['oxygen' ] = sample['oxygen']
-        sample['temperature'] = sample['temperature'] 
         sample['team'] = str(team_id)
+
+        # posts it
         r = requests.post(mc_url + '/api/sample', json=sample)
         if r.status_code == 400:
             raise Exception(r.text)
@@ -108,6 +112,11 @@ class Mission():
         new_sample = json.loads(r.text)
         print("uploaded sample %d" % new_sample['id'])
         return new_sample
+    
+    def getAllSamples(self):
+        r = requests.get(mc_url + '/api/samples')
+        samples = json.loads(r.text)['samples']
+        return samples
 
 
 if __name__ == '__main__':
