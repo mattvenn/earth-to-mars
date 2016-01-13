@@ -13,7 +13,7 @@ if pi is True:
     BUTTON = 36
 
 data_file = "mission.txt"
-rfid_hash = "sample_data.json"
+rfid_hash = os.path.join(os.path.dirname(__file__), "sample_data.json")
 mc_url = "http://mission.control:5000"
 
 class Mission():
