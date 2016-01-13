@@ -48,6 +48,13 @@ class Teams(db.Model):
     def __repr__(self):
         return self.name
 
+    def serialise(self):
+        return {
+            'id' : self.id,
+            'name' : self.name,
+            'points' : self.points,
+            }
+
 class School(db.Model):
     __tablename__ = 'schools'
     id = Column(Integer, primary_key=True)
