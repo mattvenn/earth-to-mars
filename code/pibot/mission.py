@@ -6,6 +6,7 @@ import requests
 pi = os.environ.get("NO_PI_TEST", True)
 if pi is True:
     from arduino import Arduino, Commands
+    from motors import Motors
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BOARD)
     RED_LED_GPIO = 26
@@ -14,7 +15,7 @@ if pi is True:
 
 data_file = "mission.txt"
 rfid_hash = os.path.join(os.path.dirname(__file__), "sample_data.json")
-mc_url = "http://mission.control:5000"
+mc_url = "http://mission.control"
 
 class Mission():
     
@@ -24,6 +25,7 @@ class Mission():
         if pi is True:
             self.board = Arduino()
             self.board.connect()
+            self.move = Motors()
             GPIO.setup(GREEN_LED_GPIO,GPIO.OUT)
             GPIO.setup(RED_LED_GPIO,GPIO.OUT)
             GPIO.setup(BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -78,11 +80,18 @@ class Mission():
     # fetches an RFID
     def getLocation(self):
         if pi is True:
-            rfid = self.board.sendCommand(Commands.READ_RFID,0,0)
-            # when I catalogued the RFIDs I missed the last char!
-            rfid = rfid[0:11]
-            if len(rfid) != 11:
-                raise Exception("no location yet")
+            rfid = ""
+            # keep moving until robot gets a location
+            while True:
+                rfid = self.board.sendCommand(Commands.READ_RFID,0,0)
+                # when I catalogued the RFIDs I missed the last char!
+                rfid = rfid[0:11]
+                if len(rfid) == 11:
+                    break
+                self.move.forward(70)  
+                time.sleep(0.1)
+                self.move.stop()
+                time.sleep(1)
             return rfid
     
     # tested

@@ -14,10 +14,10 @@ class Motors():
         self.board.connect()
 
     def enable(self): #arduino.A2
-        self.board.sendCommand(Commands.WRITE_DIGITAL,2,1)
+        self.board.sendCommand(Commands.WRITE_DIGITAL,7,1)
     
     def disable(self):
-        self.board.sendCommand(Commands.WRITE_DIGITAL,2,0)
+        self.board.sendCommand(Commands.WRITE_DIGITAL,7,0)
 
     def forward(self, speed):
         self.disable()
@@ -28,6 +28,14 @@ class Motors():
         self.board.sendCommand(Commands.WRITE_PWM,RIGHT_MOTOR_PLUS,command)
         #commands are set, enable the motors
         self.enable()
+		
+	def getLeft(self):
+		value = self.board.sendCommand(Commands.READ_LEFT_ENCODER,0,0)
+		return value
+	
+	def getRight(self):
+		value = self.board.sendCommand(Commands.READ_RIGHT_ENCODER,0,0)
+		return value
 
     def backward(self, speed):
         self.disable()
@@ -38,8 +46,6 @@ class Motors():
         self.board.sendCommand(Commands.WRITE_PWM,RIGHT_MOTOR_MINUS,command)
         #commands are set, enable the motors
         self.enable()
-
-
 
     def leftMotor(self, speed, direction):
         self.disable()
@@ -64,7 +70,7 @@ class Motors():
         self.enable()
 
     def stop(self):
-        self.disable()
+        #self.disable()
         self.board.sendCommand(Commands.WRITE_DIGITAL,LEFT_MOTOR_MINUS,0)
         self.board.sendCommand(Commands.WRITE_DIGITAL,RIGHT_MOTOR_MINUS,0)
         self.board.sendCommand(Commands.WRITE_DIGITAL,LEFT_MOTOR_PLUS,0)
@@ -76,6 +82,9 @@ class Motors():
         if(command > 255):
             command = 255
         return command
+
+    def __del__(self):
+        self.stop()
 
 #sleep(1)
 #print board.sendCommand(Commands.READ_ULTRASOUND,17,19)
