@@ -21,7 +21,7 @@ class TestMission(unittest.TestCase):
         location_rfid = m.rfid_hash.keys()[0]
         sample = m.takeSample(location_rfid)
         assert type(sample) is dict
-        for k in ['temperature', 'humidity', 'oxygen', 'methane', 'x', 'y']:
+        for k in ['temperature', 'humidity', 'methane', 'x', 'y']:
             assert sample.has_key(k)
 
     def test_takeSampleBadLocation(self):
@@ -54,7 +54,7 @@ class TestMission(unittest.TestCase):
         location_rfid = m.rfid_hash.keys()[0]
         sample = m.takeSample(location_rfid)
         new_sample = m.uploadSample(sample, team='AuRoRa')
-        for k in ['temperature', 'humidity', 'oxygen', 'methane', 'x', 'y']:
+        for k in ['temperature', 'humidity', 'methane', 'x', 'y']:
             assert new_sample[k] == sample[k]
 
     def test_upload_bad_team(self):
@@ -70,7 +70,7 @@ class TestMission(unittest.TestCase):
         m = Mission()
         location_rfid = m.rfid_hash.keys()[0]
         sample = m.takeSample(location_rfid)
-        sample['oxygen'] = 1000
+        sample['methane'] = 1000
         with self.assertRaises(Exception) as e:
             m.uploadSample(sample, team='Aurora')
 
