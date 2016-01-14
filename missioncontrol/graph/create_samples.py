@@ -27,6 +27,17 @@ with open("rfid.txt") as fh:
     rfids = fh.readlines()
 rfids = [rfid.strip() for rfid in rfids]
 
+def translate(value, leftMin, leftMax, rightMin, rightMax):
+    # Figure out how 'wide' each range is
+    leftSpan = leftMax - leftMin
+    rightSpan = rightMax - rightMin
+
+    # Convert the left range into a 0-1 range (float)
+    valueScaled = float(value - leftMin) / float(leftSpan)
+
+    # Convert the 0-1 range into a value in the right range.
+    return rightMin + (valueScaled * rightSpan)
+
 for x in range(0,maxx):
     for y in range(0,maxy):
         index = y + x * maxy
@@ -36,8 +47,9 @@ for x in range(0,maxx):
             xpix = SAMPLE_TYPES[sample_type]['img'].size[0] / maxx * x
             ypix = SAMPLE_TYPES[sample_type]['img'].size[1] / maxy * y
             box = (xpix - reg_size, ypix - reg_size, xpix + reg_size, ypix + reg_size) 
-            avg = avg_region(SAMPLE_TYPES[sample_type]['img'], box)
-            samples[y][x][sample_type] = round(avg[0] / 255.0 * SAMPLE_TYPES[sample_type]['max'],2)
+            avg = avg_region(SAMPLE_TYPES[sample_type]['img'], box)[0]
+            val = translate(avg,255,0,SAMPLE_TYPES[sample_type]['min'],SAMPLE_TYPES[sample_type]['max'])
+            samples[y][x][sample_type] = round(val,2)
     
         print(samples[y][x])
 

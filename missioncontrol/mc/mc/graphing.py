@@ -98,7 +98,7 @@ def update_group_graph():
                 if len(polygon):
                     pr = list(vor.point_region)
                     p = pr.index(num_reg)
-                    color = map_color(all_samples[p]['value'], config['min'], config['max'])
+                    color = 1 - map_color(all_samples[p]['value'], config['min'], config['max'])
                     plt.fill(*zip(*polygon), color=(color, color, color))
                         
 
