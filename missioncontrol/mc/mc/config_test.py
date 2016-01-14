@@ -10,8 +10,7 @@ MAX_Y = 20
 
 
 SAMPLE_TYPES = {
-    'methane': { 'min' : 0, 'max': 0.1, 'unit' : 'ppm' },
-    'oxygen' : { 'min' : 0, 'max': 0.1, 'unit' : 'ppm' },
-    'temperature' : { 'min' : 0, 'max': 200, 'unit' : 'K' },
+    'methane': { 'min' : 0, 'max': 10, 'unit' : 'ppb' },
+    'temperature' : { 'min' : -80, 'max': 30, 'unit' : 'C' },
     'humidity' : { 'min' : 0, 'max': 100, 'unit' : '%' },
     }

@@ -92,7 +92,6 @@ class SampleForm(Form):
     types = app.config['SAMPLE_TYPES']
 
     methane = FloatField('Methane', [validators.NumberRange(min=types['methane']['min'], max=types['methane']['max'])])
-    oxygen = FloatField('Oxygen', [validators.NumberRange(min=types['oxygen']['min'], max=types['oxygen']['max'])])
     temperature = FloatField('Temperature', [validators.NumberRange(min=types['temperature']['min'], max=types['temperature']['max'])])
     humidity = FloatField('Humidity', [validators.NumberRange(min=types['humidity']['min'], max=types['humidity']['max'])])
 

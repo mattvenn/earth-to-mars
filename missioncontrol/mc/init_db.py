@@ -24,7 +24,7 @@ def populate():
     db.session.add(school)
 
     # not validated, so be careful!
-    sample = Sample(team, 10, 20, 0.1, 0.1, 0.1, 0.1)
+    sample = Sample(team, 10, 20, 0.1, 0.1, 0.1)
     db.session.add(sample)
 
     db.session.commit()

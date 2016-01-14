@@ -89,7 +89,6 @@ class Sample(db.Model):
     team = relationship("Teams")
 
     methane = Column(Float(), nullable=False)
-    oxygen = Column(Float(), nullable=False)
     temperature = Column(Float(), nullable=False)
     humidity = Column(Float(), nullable=False)
 
@@ -98,24 +97,22 @@ class Sample(db.Model):
 
     timestamp = Column(DateTime, default=datetime.utcnow)
 
-    def __init__(self, team=None, x=None, y=None, methane=0, oxygen=0, temperature=0, humidity=0):
+    def __init__(self, team=None, x=None, y=None, methane=0, temperature=0, humidity=0):
         self.x = x
         self.y = y
         self.team = team
         self.methane = methane
-        self.oxygen = oxygen
         self.temperature = temperature
         self.humidity = humidity
 
     def __repr__(self):
-        return '<Sample at %d,%d = %f %f %f %f>' % (self.x, self.y, self.methane, self.oxygen, self.temperature, self.humidity)
+        return '<Sample at %d,%d = %f %f %f %f>' % (self.x, self.y, self.methane, self.temperature, self.humidity)
 
     def serialise(self):
         return {
             'id' : self.id,
             'x' : self.x,
             'y' : self.y,
-            'oxygen' : self.oxygen,
             'team' : self.team.name,
             'methane' : self.methane,
             'temperature' : self.temperature,

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from PIL import Image
 from config_real import SAMPLE_TYPES
 from config_real import MAX_X as maxx
@@ -18,9 +19,6 @@ for sample_type in SAMPLE_TYPES.keys():
     SAMPLE_TYPES[sample_type]['img'] = Image.open(sample_type + ".png")
     print("%s" % (sample_type))
 
-print SAMPLE_TYPES
-exit()
-
 reg_size = 5
 samples = [[x for x in range(maxx)] for y in range(maxy)]
 
@@ -39,7 +37,7 @@ for x in range(0,maxx):
             ypix = SAMPLE_TYPES[sample_type]['img'].size[1] / maxy * y
             box = (xpix - reg_size, ypix - reg_size, xpix + reg_size, ypix + reg_size) 
             avg = avg_region(SAMPLE_TYPES[sample_type]['img'], box)
-            samples[y][x][sample_type] = avg[0] / 255.0 * SAMPLE_TYPES[sample_type]['max']
+            samples[y][x][sample_type] = round(avg[0] / 255.0 * SAMPLE_TYPES[sample_type]['max'],2)
     
         print(samples[y][x])
 

@@ -10,8 +10,7 @@
     <th>ID</th>
     <th>X</th>
     <th>Y</th>
-    <th>Methane ppm</th>
-    <th>Oxygen ppm</th>
+    <th>Methane ppb</th>
     <th>Temperature C</th>
     <th>Humidity %</th>
   </tr>
@@ -21,7 +20,6 @@
     <td>{{ sample.x }}</td>
     <td>{{sample.y}}</td>
     <td>{{sample.methane | round(2)}}</td>
-    <td>{{sample.oxygen | round(2)}}</td>
     <td>{{sample.temperature| round(2)}}</td>
     <td>{{sample.humidity | round(2)}}</td>
   </tr>

@@ -145,10 +145,10 @@ class MCPopulatedTest(TestCase):
             assert '<td>%s</td>' % s in rv.data
 
     def test_add_sample(self):
-        sample = { 'x' : None, 'y' : None, 'team': None, 'type' : None, 'value' : None }
+        sample = { 'x' : None, 'y' : None, 'team': None, 'type' : None }
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
-        assert 'Not a valid choice' in rv.data
-        assert 'must be between 0 and 20' in rv.data
+        assert 'must be between 0 and 10' in rv.data
+        assert 'must be between 0 and 100' in rv.data
 
         sample['x'] = 5
         sample['y'] = 5
@@ -160,7 +160,6 @@ class MCPopulatedTest(TestCase):
         assert 'must be between 0 and 1' in rv.data
 
         sample['methane'] = 0.1
-        sample['oxygen'] = 0.1
         sample['temperature'] = 0.1
         sample['humidity'] = 0.1
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
@@ -195,7 +194,6 @@ class MCPopulatedTest(TestCase):
         assert json.loads(rv.data)['x'] == 10
         assert json.loads(rv.data)['y'] == 20
         assert json.loads(rv.data)['methane'] == 0.1
-        assert json.loads(rv.data)['oxygen'] == 0.1
         assert json.loads(rv.data)['temperature'] == 0.1
         assert json.loads(rv.data)['humidity'] == 0.1
        
@@ -212,9 +210,8 @@ class MCPopulatedTest(TestCase):
         # could test that min and max samples work
 
         rv = self.client.post('/api/sample', 
-            data=json.dumps({ 'team' : "1", 'x' : 1, 'y': 1, 'methane' : 0, 'oxygen' : 0, 'temperature' : 0, 'humidity' : 0 }), content_type='application/json')
+            data=json.dumps({ 'team' : "1", 'x' : 1, 'y': 1, 'methane' : 0, 'temperature' : 0, 'humidity' : 0 }), content_type='application/json')
         assert json.loads(rv.data)['id'] == 2
-        assert json.loads(rv.data)['oxygen'] == 0
 
         assert self.get_school_points() == points + 1
 
