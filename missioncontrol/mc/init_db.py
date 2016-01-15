@@ -15,17 +15,17 @@ def populate():
             db.session.add(team)
 
     with open('questions.csv', 'rb') as csvfile:
-        reader = csv.reader(csvfile, delimiter=',', quotechar='|')
+        reader = csv.reader(csvfile, delimiter='|')
         for row in reader:
             question = Questions(row[0],row[1],row[2])
             db.session.add(question)
 
-    school = School('test')
+    school = School('Bristol Grammar')
     db.session.add(school)
 
     # not validated, so be careful!
-    sample = Sample(team, 10, 20, 0.1, 0.1, 0.1)
-    db.session.add(sample)
+#    sample = Sample(team, 10, 20, 0.1, 0.1, 0.1)
+#    db.session.add(sample)
 
     db.session.commit()
 
