@@ -1,6 +1,7 @@
 <!doctype html>
 <title>Mission Control</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<meta http-equiv="refresh" content="60">
 <div class=page>
   <h1><a href="{{ url_for('mission_control') }}">Mission Control</a></h1>
   {% for message in get_flashed_messages() %}

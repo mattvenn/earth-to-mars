@@ -1,19 +1,41 @@
 {% extends "layout.html" %}
 {% block body %}
+<table>
+<tr>
+<td>
 <div class="badge"></div>
+</td>
+<td>
 <div class="school-name">School: {{ school_info.name }}</div>
 <div class="points">Points: {{ school_info.points }}</div>
 <div class="time-now">{{ time_info.now }}</div>
 <div class="time-left">T minus {{ time_info.left }}</div>
+</td>
+</tr>
+</table>
 
+<div class="mc-graph">
+<table>
+<tr>
+<td>
+<h3>Methane</h3>
 <a href="{{ url_for('show_group_graph', type='methane') }}">
-<img class="mc-graph" src="{{ url_for('static', filename='graphs/methane_group_%d.png' % group_id) }}"></a>
+<img src="{{ url_for('static', filename='graphs/methane_group_%d.png' % group_id) }}"></a>
+</td>
 
+
+<td>
+<h3>Temperature</h3>
 <a href="{{ url_for('show_group_graph', type='temperature') }}">
     <img class="mc-graph" src="{{ url_for('static', filename='graphs/temperature_group_%d.png' % group_id) }}"></a>
-
+</td>
+<td>
+<h3>Humidity</h3>
 <a href="{{ url_for('show_group_graph', type='humidity') }}">
     <img class="mc-graph" src="{{ url_for('static', filename='graphs/humidity_group_%d.png' % group_id) }}"></a>
-
+</td>
+</tr>
+</table>
+</div>
 {% endblock %}
 

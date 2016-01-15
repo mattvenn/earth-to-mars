@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
 {% block body %}
+<h3>{{ type }}</h3>
  <img class="group-graph", src="{{ url_for('static', filename='graphs/%s_group_%d.png' % (type, group_id)) }}">
 {% endblock %}
