@@ -47,7 +47,7 @@ class Arduino:
         #reseting the arduino board
         self.reset()
         # open the serial port at 115200 baud with a read timeout of 2 seconds
-        Arduino.port = serial.Serial('/dev/ttyS0', 115200, timeout=2)
+        Arduino.port = serial.Serial('/dev/ttyAMA0', 115200, timeout=2)
         Arduino.port.flushInput()
         Arduino.port.flushOutput()
         Arduino.port.write("\n".encode())

@@ -6,11 +6,13 @@ board = Arduino()
 board.connect()
 move = Motors()
 
+power = 100
+
 # draw a square
 
 while True:
 	print("forward")
-	move.forward(50)
+	move.forward(power)
 	sleep(1)
 	move.stop()
 
@@ -18,8 +20,8 @@ while True:
 
 	# turn
 	print("turn")
-	move.leftMotor(50, 1)
-	move.rightMotor(50, 0)
+	move.leftMotor(power, 1)
+	move.rightMotor(power, 0)
 	sleep(1)
 	move.stop()
 
