@@ -18,7 +18,7 @@ h2              { font-size: 1.2em; }
                   border: 1px solid #aacbe2; }
 .errors         { background: #f0d6d6; padding: 0.5em; }
 
-.mc-graph        { width: 32%; }
+.mc-graph img        { width: 100%; }
 .submit-graph    { width: 100%; }
 .group-graph    { width: 100%; }
 .submit-photo    { width: 100%; }
