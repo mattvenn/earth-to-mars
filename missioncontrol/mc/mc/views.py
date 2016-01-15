@@ -8,7 +8,7 @@ from contextlib import closing
 from flask_admin.contrib.sqla import ModelView
 import time
 
-from wtforms import TextField, IntegerField, FloatField, SelectField, PasswordField
+from wtforms import TextAreaField, TextField, IntegerField, FloatField, SelectField, PasswordField
 
 from wtforms import validators
 from flask_wtf import Form
@@ -60,7 +60,7 @@ class LoginForm(Form):
 class AnswerForm(Form):
 
     team = QuerySelectField(query_factory=get_teams)
-    answer = TextField('Answer', [validators.Required()])
+    answer = TextAreaField('Answer', [validators.Required()])
 
     def validate(self):
         rv = Form.validate(self)
@@ -121,7 +121,7 @@ def get_group_id():
 def mission_control():
     school = School.query.order_by(School.timestamp.desc()).first()
     now = datetime.datetime.now()
-    end_time = datetime.datetime.now().replace(hour=16,minute=0,second=0)
+    end_time = datetime.datetime.now().replace(hour=15,minute=0,second=0)
     delta = end_time - now
     mins = delta.total_seconds() / 60
     hours = mins / 60
