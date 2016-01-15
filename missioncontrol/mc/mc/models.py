@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, ForeignKey, Tex
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from mc import db
+from mc import app
 
 class Questions(db.Model):
     __tablename__ = 'questions'
@@ -96,8 +97,9 @@ class Sample(db.Model):
     y = Column(Integer(), nullable=False)
 
     timestamp = Column(DateTime, default=datetime.utcnow)
+    conf = app.config['SAMPLE_TYPES']
 
-    def __init__(self, team=None, x=None, y=None, methane=0, temperature=0, humidity=0):
+    def __init__(self, team=None, x=None, y=None, methane=conf['methane']['min'], temperature=conf['temperature']['min'], humidity=conf['humidity']['min']):
         self.x = x
         self.y = y
         self.team = team
