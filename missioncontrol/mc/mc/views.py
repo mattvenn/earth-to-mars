@@ -3,7 +3,7 @@ from mc import db
 from sqlalchemy.exc import IntegrityError
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash, jsonify
+     abort, render_template, flash, jsonify, make_response
 from contextlib import closing
 from flask_admin.contrib.sqla import ModelView
 import time
@@ -178,6 +178,32 @@ def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
     response.status_code = error.status_code
     return response
+
+def make_csv_response(head, list, name):
+    import StringIO
+    import csv
+    si = StringIO.StringIO()
+    cw = csv.writer(si)
+    cw.writerow(head)
+    for i in list:
+        cw.writerow(i.get_csv())
+#    return si.getvalue().strip('\r\n')
+    response = make_response(si.getvalue())
+    response.headers["Content-Disposition"] = "attachment; filename=%s" % name
+    return response
+
+@app.route('/api/questions')
+def api_get_questions():
+    questions = Questions.query.all()
+    head = Questions.get_csv_head()
+    return make_csv_response(head, questions,'questions.csv')
+
+
+@app.route('/api/answers')
+def api_get_answers():
+    answers = Answers.query.all()
+    head = Answers.get_csv_head()
+    return make_csv_response(head, answers,'answers.csv')
 
 # tested
 @app.route('/api/team/<name>')

@@ -16,8 +16,12 @@ class Questions(db.Model):
         self.answer = answer
         self.image_path = image_path
 
-    def __repr__(self):
-        return "%d: %s" % (self.id, self.question)
+    @staticmethod
+    def get_csv_head():
+        return "id", "question"
+
+    def get_csv(self):
+        return self.id, self.question
 
 class Answers(db.Model):
     __tablename__ = 'answers'
@@ -33,8 +37,12 @@ class Answers(db.Model):
         self.team = team
         self.question = question
 
-    def __repr__(self):
-        return self.answer
+    @staticmethod
+    def get_csv_head():
+        return "id","question_id","team","answer"
+
+    def get_csv(self):
+        return self.id, self.question.id, self.team, self.answer
 
 class Teams(db.Model):
     __tablename__ = 'teams'
