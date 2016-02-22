@@ -59,13 +59,18 @@ class LoginForm(Form):
 
 class AnswerForm(Form):
 
-    team = QuerySelectField(query_factory=get_teams)
+    team = QuerySelectField(query_factory=get_teams, allow_blank=True, blank_text=u'Please choose')
     answer = TextAreaField('Answer', [validators.Required()])
 
     def validate(self):
         rv = Form.validate(self)
         if not rv:
             return False
+
+        if not self.team.data:
+            self.team.errors.append('choose a team')
+            return False
+
         self.answer = Answers(None, self.answer.data, self.team.data)
         return True
 
@@ -73,7 +78,7 @@ class AnswerForm(Form):
     
 class PhotoForm(Form):
     
-    team = QuerySelectField(query_factory=get_teams)
+    team = QuerySelectField(query_factory=get_teams, allow_blank=True, blank_text=u'Please choose')
 
     maxx = app.config['MAX_X']
     maxy = app.config['MAX_Y']
@@ -86,9 +91,20 @@ class PhotoForm(Form):
             FileAllowed(['jpg', 'png'], message='only images allowed')
             ])
 
+    def validate(self):
+        rv = Form.validate(self)
+        if not rv:
+            return False
+
+        if not self.team.data:
+            self.team.errors.append('choose a team')
+            return False
+
+        return True
+
 class SampleForm(Form):
     
-    team = QuerySelectField(query_factory=get_teams)
+    team = QuerySelectField(query_factory=get_teams, allow_blank=True, blank_text=u'Please choose')
     types = app.config['SAMPLE_TYPES']
 
     methane = FloatField('Methane', [validators.NumberRange(min=types['methane']['min'], max=types['methane']['max'])])
@@ -101,11 +117,25 @@ class SampleForm(Form):
     x = IntegerField('X', [validators.NumberRange(min=0, max=maxx - 1)])
     y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy - 1)])
 
+    def validate(self):
+        rv = Form.validate(self)
+        if not rv:
+            return False
+
+        if not self.team.data:
+            self.team.errors.append('choose a team')
+            return False
+
+        if Sample.query.filter(Sample.x == self.x.data, Sample.y == self.y.data, Sample.team == self.team.data).first():
+
+            self.team.errors.append('your team already uploaded this sample')
+            return False
+        return True
 
 # tested
-def add_school_point():
+def add_school_point(points=1):
     school = School.query.order_by(School.timestamp.desc()).first()
-    school.points += 1
+    school.points += points 
     db.session.commit()
 
 # tested
@@ -149,6 +179,7 @@ def add_sample():
     if form.validate_on_submit():
         sample = Sample()
         form.populate_obj(sample)
+
         db.session.add(sample)
         db.session.commit()
         add_school_point()
@@ -283,7 +314,7 @@ def questions(question_id):
         form.answer.question = question
         db.session.add(form.answer)
         db.session.commit()
-        add_school_point()
+        add_school_point(10)
         flash('answer logged')
         return redirect(url_for('answers', question_id=question_id))
 

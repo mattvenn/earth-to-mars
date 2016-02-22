@@ -20,13 +20,18 @@ def populate():
             question = Questions(row[0],row[1],row[2])
             db.session.add(question)
 
-    school = School('Bristol Grammar')
+
+    db.session.commit()
+
+def populate_test():
+    populate()
+    school = School('test')
     db.session.add(school)
+    team = Teams.query.first()
 
     # not validated, so be careful!
-#    sample = Sample(team, 10, 20, 0.1, 0.1, 0.1)
-#    db.session.add(sample)
-
+    sample = Sample(team, 10, 20, 0.1, 0.1, 0.1)
+    db.session.add(sample)
     db.session.commit()
 
 db.drop_all()

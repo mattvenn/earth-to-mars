@@ -116,7 +116,7 @@ class Sample(db.Model):
         self.humidity = humidity
 
     def __repr__(self):
-        return '<Sample at %d,%d = %f %f %f %f>' % (self.x, self.y, self.methane, self.temperature, self.humidity)
+        return '<Sample at %d,%d = %f %f %f>' % (self.x, self.y, self.methane, self.temperature, self.humidity)
 
     def serialise(self):
         return {

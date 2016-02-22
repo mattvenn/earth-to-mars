@@ -5,7 +5,7 @@ import os
 import json
 from mc.models import Teams, School, Sample
 from mc.graphing import map_color
-from init_db import populate
+from init_db import populate_test
 
 # use test environment
 os.environ["DIAG_CONFIG_MODULE"] = "mc.config_test"
@@ -115,7 +115,7 @@ class MCPopulatedTest(TestCase):
         with self.app.app_context():
             db.drop_all()
             db.create_all()
-            populate()
+            populate_test()
 
     def tearDown(self):
         db.session.remove()
@@ -145,7 +145,7 @@ class MCPopulatedTest(TestCase):
             assert '<td>%s</td>' % s in rv.data
 
     def test_add_sample(self):
-        sample = { 'x' : None, 'y' : None, 'team': None, 'type' : None }
+        sample = { 'x' : None, 'y' : None, 'team': None }
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'must be between 0 and 10' in rv.data
         assert 'must be between 0 and 100' in rv.data
@@ -162,6 +162,7 @@ class MCPopulatedTest(TestCase):
         sample['methane'] = 0.1
         sample['temperature'] = 0.1
         sample['humidity'] = 0.1
+
         rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
         assert 'sample logged' in rv.data
 
@@ -171,20 +172,37 @@ class MCPopulatedTest(TestCase):
         rv = self.client.get("/show/samples")
         assert '0.1' in rv.data
 
+    def test_reject_repeated_sample(self):
+        sample = { 'x' : 5, 'y' : 6, 'team': 1, 'methane': 0.1, 'temperature': 0.1, 'humidity': 0.1 }
+        # team 1 uploads sample
+        rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
+        assert 'sample logged' in rv.data
+
+        # team 2 uploads same sample - ok
+        sample['team'] = 2
+
+        rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
+        assert 'sample logged' in rv.data
+
+
+        # team 1 tries to upload sample again - not ok
+        sample['team'] = 1
+        rv = self.client.post('/upload/sample', data=sample, follow_redirects=True)
+        assert 'your team already uploaded this sample' in rv.data
+
     def test_answer_question(self):
         points = self.get_school_points()
         answer = { 'answer' : None, 'team': None }
         rv = self.client.post('/questions/1', data=answer, follow_redirects=True)
-        assert 'Not a valid choice' in rv.data
         assert 'This field is required' in rv.data
 
         answer['team'] = 1
         answer['answer'] = 'blah'
 
         rv = self.client.post('/questions/1', data=answer, follow_redirects=True)
-        assert 'carrots' in rv.data
-        assert 'carrots.png' in rv.data
-        assert self.get_school_points() == points + 1
+        assert 'samples' in rv.data
+#        assert 'carrots.png' in rv.data
+        assert self.get_school_points() == points + 10
 
 
     def test_get_sample_api(self):
@@ -214,6 +232,20 @@ class MCPopulatedTest(TestCase):
         assert json.loads(rv.data)['id'] == 2
 
         assert self.get_school_points() == points + 1
+
+    def test_reject_repeated_add_sample_api(self):
+        rv = self.client.post('/api/sample', 
+            data=json.dumps({ 'team' : "1", 'x' : 1, 'y': 1, 'methane' : 0, 'temperature' : 0, 'humidity' : 0 }), content_type='application/json')
+        
+        sample = json.loads(rv.data)
+        assert sample['id'] == 2
+
+        rv = self.client.post('/api/sample', 
+            data=json.dumps({ 'team' : "1", 'x' : 1, 'y': 1, 'methane' : 0, 'temperature' : 0, 'humidity' : 0 }), content_type='application/json')
+
+        sample = json.loads(rv.data)
+        assert sample['message'] == 'invalid data'
+        assert 'already uploaded' in sample['team'][0]
 
     def test_get_all_samples(self):
         rv = self.client.get("/api/samples")
