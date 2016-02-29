@@ -23,6 +23,7 @@ h2              { font-size: 1.2em; }
 .group-graph    { width: 100%; }
 .submit-photo    { width: 100%; }
 .mini-photo    { width: 15px; }
+.panorama { width: 100%; border: 1px solid black; }
 
 div.badge {
    content:url(/static/badge.png);

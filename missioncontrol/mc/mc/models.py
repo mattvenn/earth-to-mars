@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from mc import db
 from mc import app
+from PIL import Image
 
 class Questions(db.Model):
     __tablename__ = 'questions'
@@ -90,6 +91,63 @@ class Photo(db.Model):
     y = Column(Integer(), nullable=False)
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)
     team = relationship("Teams")
+
+    def add_to_panorama(self):
+        dir = app.static_folder + "/photos/"
+        # open background or create it
+        try:
+            background = Image.open(dir + app.config['PANORAMA'], 'r')
+        except IOError:
+            w = app.config['PANORAMA_W']
+            h = app.config['PANORAMA_H']
+            background = Image.new('RGBA', (w, h), (255, 255, 255, 255))
+
+        # resize image
+        img = Image.open(dir + self.image_path)
+        img_w, img_h = img.size
+        thumb_h = app.config['PANORAMA_H']
+        thumb_w = img_w / (img_h / thumb_h)
+        img.thumbnail((thumb_w, thumb_h) , Image.ANTIALIAS)
+
+        # calculate offset
+        min_d = app.config['PANORAMA_MIN_D']
+        max_x = app.config['MAX_X']
+        max_y = app.config['MAX_Y']
+
+        offset = 0
+        # bottom
+        if self.y < min_d:
+            print("bottom")
+            offset = self.x
+
+        # right
+        elif self.x > max_x - min_d:
+            print("right")
+            offset = max_x + self.y
+
+        # top
+        elif self.y > max_y - min_d:
+            print("top")
+            offset = max_x + max_y + max_x - self.x
+
+        # left
+        elif self.x < min_d:
+            print("left")
+            offset = max_x + max_y + max_x + max_y - self.y
+        else:
+            print("invalid position")
+            return
+
+        total_pos = max_x * 2 + max_y * 2
+        offset_px = offset * (app.config['PANORAMA_W'] / total_pos)
+        print("offset = %d/%d => %d/%d" % (offset, total_pos, offset_px, app.config['PANORAMA_W']))
+
+        mask = Image.open(app.static_folder + "/alpha.jpg", 'r')
+        mask = mask.resize(img.size)
+        background.paste(img, (offset_px, 0), mask)
+
+        # save panorama
+        background.save(dir + app.config['PANORAMA'])
 
 class Sample(db.Model):
     __tablename__ = 'samples'
