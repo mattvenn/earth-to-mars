@@ -36,7 +36,7 @@ class Mission():
 
 
     # won't test
-    def waitForButton(self):
+    def startMission(self):
         if pi is True:
             GPIO.output(GREEN_LED_GPIO,False)
             GPIO.output(RED_LED_GPIO,True)
@@ -130,7 +130,7 @@ class Mission():
 
 if __name__ == '__main__':
     mission = Mission()
-    mission.waitForButton()	
+    mission.startMission()	
 
     while True:
         try:

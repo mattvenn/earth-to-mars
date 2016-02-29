@@ -7,7 +7,7 @@ photo below:
 * hdmi for video
 * usb for keyboard and mouse
 
-TODO photo here
+\ ![plugs](plugs-annotated.png)
 
 The first time the robot is plugged in you will see the computer loading on the
 screen. After a while you will see a login screen. The username is `pi` and the
@@ -17,16 +17,16 @@ password is `raspberry`.
 
 The following training missions will get you prepared for the real missions.
 
-To get started, double click on the Idle2 icon.
+To get started, double click on the Idle icon.
 
-TODO where to write the code for the missions?
+\ ![file browser](screenshot-annotated.png)
 
 ## 0 - Hello Python!
 
+
+In Idle, click `file -> new window`. Type the code below into the new window.
 The numbers on the left are line numbers and don't need to be typed in.
 The codes on the right are Python commands and they have to be copied exactly as written. Make sure you copy all the symbols, and that everything is in the correct case.
-
-In Idle, click `file -> new window`. Type the following into the new window:
 
 ~~~ { .python .numberLines }
 print("Earth to Mars!")
@@ -105,7 +105,7 @@ with picamera.PiCamera() as camera:
 Write a program that can take a photo of your team and use the file browser to
 look at the photo.
 
-\ ![file browser](filemanager.png)
+\ ![file browser](screenshot-annotated.png)
 
 ## 4 - Obstacle avoidance
 
@@ -164,7 +164,7 @@ Here's how you wait for a button:
 from pibot.mission import Mission
 mission = Mission()
 
-mission.waitForButton() #  turns on the red and waits for the button
+mission.startMission() #  turns on the red and waits for the button
 print("hello!")
 mission.endMission() # turns on the green led.
 ~~~
@@ -229,17 +229,14 @@ Tips:
  on Mars yet!
 * Save your program as mission1.py
 * Make sure you save your sample and the location using the technique shown in training mission 6
-* Use `mission.waitForButton()` so the program can be started in the Mars Yard
+* Use `mission.startMission()` so the program can be started in the Mars Yard
 * Start your program running
 * Unplug the keyboard, mouse and monitor before taking your robot to the launch
 * Press the button once the robot is in the Mars Yard
 
-Given that Mars doesn't have a GPS system, how do you think the real Mars robot
-works out its position? 
+Use the web browser to answer the question at `http://mission.control/questions/1` 
 
-Use the Midori web browser to answer the question at `http://mission.control/questions/1` 
-
-\ ![browser](web_browser.jpg)
+\ ![web browser](screenshot-annotated.png)
 
 ## 2 - Upload sample data to group database.
 
@@ -254,8 +251,7 @@ database, open the web browser and go to `http://mission.control/upload/sample`.
 Enter your location and sample values into the fields and then press `upload`.
 
 You can see the results of all the data on the big mission control screen, or go
-to `http://mission.control`. Where do you think the best places are to search
-for life? Why? 
+to `http://mission.control`. 
 
 Answer the question at `http://mission.control/questions/2`
 
@@ -270,9 +266,6 @@ robot's location when the photo was taken.
 When your robot returns, upload the photo to `http://mission.control/upload/photo`.
 
 Mission control will build a panorama of the images as more are uploaded.
-
-How many photos do you think the real robot takes in a day? How many of those do
-you think get sent back to Earth for analysis by scientists? 
 
 Answer the question at `http://mission.control/questions/4`
 
@@ -302,9 +295,6 @@ The part of the loop that is repeated has been indented. This should
 automatically happen after you type the `:` character.
 
 The more samples you take, the more accurate the measurement.
-
-How many samples do you think you should take for temperature, humidity and
-hydrogen? Why?
 
 Answer the question at `http://mission.control/questions/4`
 
@@ -345,8 +335,6 @@ So if your team name was `Earth` here's how you could use it:
 
 Adapt this program to upload all your samples automatically.
 
-Do you think the robot sends back all its samples or just some of them. Why?
-
 Answer the question at `http://mission.control/questions/5`
 
 ## 6 - Process data
@@ -375,8 +363,5 @@ for sample in samples:
 
 Adapt the program to print out the total number of samples, and the average of
 each type of sample.
-
-If the robot sends back 10,000 samples, do you think scientists look at them all
-individually or use a computer to analyse them? Why?
 
 Answer the question at `http://mission.control/questions/6`
