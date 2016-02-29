@@ -23,13 +23,17 @@ class UserBehavior(TaskSet):
     @task(3)
     def post_sample(self):
                  
-        sample = { 'x' : random.randint(1,30), 'y' : random.randint(1,20), 'team': str(random.randint(1,10)), 'methane': random.random(), 'temperature': random.random(), 'humidity': random.random() }
+        sample = { 'x' : random.randint(1,29), 'y' : random.randint(1,19), 'team': str(random.randint(1,10)), 'methane': random.random(), 'temperature': random.random(), 'humidity': random.random() }
 
-        rv = self.client.post('http://localhost:8080/api/sample', json=sample)
+        rv = self.client.post('/api/sample', json=sample)
 
     @task(4)
     def static(self):
         self.client.get("/static/badge.png")
+
+    @task(5)
+    def static(self):
+        self.client.get("/static/graphs/methane_group_2.png")
 
 
 class WebsiteUser(HttpLocust):
