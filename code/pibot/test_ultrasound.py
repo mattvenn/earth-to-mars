@@ -20,3 +20,5 @@ while True:
             camera.hflip = True
             camera.capture("photo.jpg") 
             break;
+    
+    time.sleep(0.5)
