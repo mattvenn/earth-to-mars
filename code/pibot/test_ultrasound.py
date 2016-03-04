@@ -18,6 +18,7 @@ while True:
         with picamera.PiCamera() as camera:
             camera.resolution = (1024, 768)
             camera.hflip = True
+            camera.vflip = True
             camera.capture("photo.jpg") 
             break;
     
