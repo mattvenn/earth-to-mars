@@ -12,7 +12,7 @@ class Ultrasound():
         self.board.connect()
 
     def getDistance(self):
-        return self.board.sendCommand(Commands.READ_ULTRASOUND,TRIGGER_PIN,0)
+        return int(self.board.sendCommand(Commands.READ_ULTRASOUND,TRIGGER_PIN,0))
 
 if __name__ == '__main__':
 	ultra = Ultrasound()
