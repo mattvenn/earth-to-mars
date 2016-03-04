@@ -10,7 +10,7 @@ ultra = Ultrasound()
 print("testing ultrasound")
 
 while True:
-    distance = ultra.getDistance()
+    distance = int(ultra.getDistance())
     print(distance)
 
     if distance <= 20:
