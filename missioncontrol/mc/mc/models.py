@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from mc import db
 from mc import app
+from PIL import Image
 
 class Questions(db.Model):
     __tablename__ = 'questions'
@@ -90,6 +91,73 @@ class Photo(db.Model):
     y = Column(Integer(), nullable=False)
     team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)
     team = relationship("Teams")
+
+
+    def add_to_panorama(self):
+        dir = app.static_folder + "/photos/"
+        # open background or create it
+        try:
+            background = Image.open(dir + app.config['PANORAMA'], 'r')
+        except IOError:
+            w = app.config['PANORAMA_W']
+            h = app.config['PANORAMA_H']
+            background = Image.new('RGBA', (w, h), (255, 255, 255, 255))
+
+        # resize image
+        img = Image.open(dir + self.image_path)
+        img_w, img_h = img.size
+        thumb_h = app.config['PANORAMA_H']
+        thumb_w = img_w / (img_h / thumb_h)
+        img.thumbnail((thumb_w, thumb_h) , Image.ANTIALIAS)
+
+        # get panorama position
+        offset = Photo.calculate_offset(self.x, self.y)
+        if offset is None:
+            return
+
+        max_x = app.config['MAX_X']
+        max_y = app.config['MAX_Y']
+        total_pos = max_x * 2 + max_y * 2
+        offset_px = offset * (app.config['PANORAMA_W'] / total_pos)
+        print("(%2d, %2d) offset = %d/%d => %d/%d" % (self.x, self.y, offset, total_pos, offset_px, app.config['PANORAMA_W']))
+
+        # open mask
+        mask = Image.open(app.static_folder + "/alpha.jpg", 'r')
+        mask = mask.resize(img.size)
+
+        # paste the thumbnail in with the mask
+        background.paste(img, (offset_px, 0), mask)
+
+        # save panorama
+        background.save(dir + app.config['PANORAMA'])
+
+    @staticmethod
+    def calculate_offset(x, y):
+        # calculate offset
+        min_d = app.config['PANORAMA_MIN_D']
+        max_x = app.config['MAX_X']
+        max_y = app.config['MAX_Y']
+
+        offset = 0
+        # bottom
+        if y < min_d:
+            offset = x
+
+        # right
+        elif x > max_x - min_d:
+            offset = max_x + y
+
+        # top
+        elif y > max_y - min_d:
+            offset = max_x + max_y + max_x - x
+
+        # left
+        elif x < min_d:
+            offset = max_x + max_y + max_x + max_y - y
+        else:
+            return None
+        
+        return offset
 
 class Sample(db.Model):
     __tablename__ = 'samples'

@@ -135,8 +135,9 @@ class SampleForm(Form):
 # tested
 def add_school_point(points=1):
     school = School.query.order_by(School.timestamp.desc()).first()
-    school.points += points 
-    db.session.commit()
+    if school is not None:
+        school.points += points 
+        db.session.commit()
 
 # tested
 def get_group_id():
@@ -170,6 +171,11 @@ def show_samples():
 @app.route('/show/graph/<type>')
 def show_group_graph(type):
     return render_template('show_group_graph.html', type=type, group_id=get_group_id())
+
+# untested
+@app.route('/show/panorama')
+def show_panorama():
+    return render_template('panorama.html', name=app.config['PANORAMA'])
 
 # tested
 @app.route('/upload/sample', methods=['GET', 'POST'])
@@ -331,7 +337,9 @@ def add_photo():
         form.populate_obj(photo)
         photo.image_path = filename
         db.session.add(photo)
+        photo.add_to_panorama()
         db.session.commit()
+        add_school_point()
 
         return render_template('photo_submitted.html', photo=photo)
 
