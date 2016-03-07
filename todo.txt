@@ -1,0 +1,10 @@
+
+reset button for mission control:
+	* resets data
+	* sends command to robot to delete files
+
+robot service:
+	* deals with reset button for robot
+	* removal of files
+	* shutdown
+
