@@ -37,3 +37,12 @@ def populate_test():
 db.drop_all()
 db.create_all()
 populate()
+
+# delete graphs
+import glob, os
+graphs = glob.glob(app.static_folder + "/graphs/*.png")
+for f in graphs:
+    os.remove(f)
+photos = glob.glob(app.static_folder + "/photos/*")
+for f in photos:
+    os.remove(f)
