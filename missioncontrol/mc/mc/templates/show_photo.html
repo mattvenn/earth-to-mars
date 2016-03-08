@@ -1,8 +1,0 @@
-{% extends "layout.html" %}
-{% block body %}
-{% if photo %}
- <img class="submit-photo", src="{{ url_for('static', filename='photos/' + photo.image_path)}}">
-{% else %}
-<p>No photo of that id
-{% endif %}
-{% endblock %}
