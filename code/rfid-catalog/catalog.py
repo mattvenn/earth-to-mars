@@ -18,7 +18,8 @@ while True:
     code = s.read(14)
     assert code[0] == '\x02'
     assert code[13] == '\x03'
-    code = code[1:12]
+    code = code[1:13]  # 12 characters
+    assert len(code) == 12
     if code == last_code:
         print("re-read")
         bad_sound.play()
