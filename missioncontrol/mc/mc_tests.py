@@ -70,6 +70,8 @@ class MCEmptyTest(TestCase):
     def test_admin_no_auth(self):
         rv = self.client.get("/admin/sample", follow_redirects=True)
         assert '<h2>Login</h2>' in rv.data
+        rv = self.client.get("/admin/reset", follow_redirects=True)
+        assert '<h2>Login</h2>' in rv.data
 
     def test_login_logout(self):
         rv = self.login(app.config['USERNAME'], app.config['PASSWORD'])
@@ -96,14 +98,6 @@ class MCEmptyTest(TestCase):
     def logout(self):
         return self.client.get('/logout', follow_redirects=True)
 
-    def test_no_photos(self):
-        rv = self.client.get("/show/photos")
-        assert rv.data.count('blank.png') == 30 * 20
-
-    def test_no_photo(self):
-        rv = self.client.get("/show/photo/1")
-        assert 'No photo of that id' in rv.data
-        
 
 class MCPopulatedTest(TestCase):
 
