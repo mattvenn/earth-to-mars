@@ -17,7 +17,11 @@ db.init_app(app)
 import mc.views
 from mc.models import Teams, School, Sample, Questions, Answers
 
+
+from mc.admin import Reset
+
 admin = Admin(app, name='mission control')
+admin.add_view(Reset(name='Reset', url='reset'))
 admin.add_view(views.SecureView(School, db.session))
 admin.add_view(views.SecureView(Sample, db.session))
 admin.add_view(views.SecureView(Teams, db.session))
