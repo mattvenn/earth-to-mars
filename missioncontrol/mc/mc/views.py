@@ -271,7 +271,7 @@ def zipped_data():
         zf.writestr('samples.json', json.dumps(data))
 
     memory_file.seek(0)
-    return send_file(memory_file, attachment_filename='data.zip', as_attachment=True)
+    return send_file(memory_file, attachment_filename='missioncontrol.zip', as_attachment=True)
 
 # tested
 @app.route('/api/team/<name>')
