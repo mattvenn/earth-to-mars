@@ -44,8 +44,8 @@ for x in range(0,maxx):
         samples[y][x] = { 'rfid' : rfids[index] }
         for sample_type in SAMPLE_TYPES.keys():
 
-            xpix = SAMPLE_TYPES[sample_type]['img'].size[0] / maxx * x
-            ypix = SAMPLE_TYPES[sample_type]['img'].size[1] / maxy * y
+            xpix = SAMPLE_TYPES[sample_type]['img'].size[0] / maxx * x + reg_size
+            ypix = SAMPLE_TYPES[sample_type]['img'].size[1] / maxy * y + reg_size
             box = (xpix - reg_size, ypix - reg_size, xpix + reg_size, ypix + reg_size) 
             avg = avg_region(SAMPLE_TYPES[sample_type]['img'], box)
             val = translate(avg,255,0,SAMPLE_TYPES[sample_type]['min'],SAMPLE_TYPES[sample_type]['max'])
@@ -71,3 +71,11 @@ for x in range(0,maxx):
 import json
 with open('sample_data.json', 'w') as fh:
     json.dump(robot_hash, fh, indent=0)
+
+# export as 3 csv files
+import csv
+for sample_type in SAMPLE_TYPES.keys():
+    with open(sample_type + '.csv', 'wb') as csvfile:
+        wr = csv.writer(csvfile, delimiter=',')
+        for row in samples:
+            wr.writerow([r[sample_type] for r in row])
