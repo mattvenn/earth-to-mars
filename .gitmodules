@@ -1,0 +1,3 @@
+[submodule "missioncontrol/mc/mc/static/jquery"]
+	path = missioncontrol/mc/mc/static/jquery
+	url = git://github.com/jquery/jquery.git
