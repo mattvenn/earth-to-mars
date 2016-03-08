@@ -20,6 +20,8 @@ def populate():
             question = Questions(row[0],row[1],row[2])
             db.session.add(question)
 
+    school = School('Schoolname')
+    db.session.add(school)
 
     db.session.commit()
 
@@ -34,15 +36,21 @@ def populate_test():
     db.session.add(sample)
     db.session.commit()
 
+def drop_graphs():
+    import glob, os
+    graphs = glob.glob(app.static_folder + "/graphs/*.png")
+    for f in graphs:
+        os.remove(f)
+    photos = glob.glob(app.static_folder + "/photos/*")
+    for f in photos:
+        os.remove(f)
+
+# drop db
 db.drop_all()
+# delete graphs
+drop_graphs()
+
+# init
 db.create_all()
 populate()
-
-# delete graphs
-import glob, os
-graphs = glob.glob(app.static_folder + "/graphs/*.png")
-for f in graphs:
-    os.remove(f)
-photos = glob.glob(app.static_folder + "/photos/*")
-for f in photos:
-    os.remove(f)
+graphing.update_group_graph()
