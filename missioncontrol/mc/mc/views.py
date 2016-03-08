@@ -158,8 +158,11 @@ def mission_control():
     hours = mins / 60
     mins = mins % 60
     secs = delta.total_seconds() % 60
-    time_info = { 'now': now.strftime('%d/%m/%Y %H:%M:%S'),  'left': '%02d:%02d:%02d' % (hours, mins, secs) }
-    return render_template('mission_control.html', school_info=school, time_info=time_info, group_id=get_group_id())
+    time_info = { 'now': now.strftime('%H:%M'),  'left': '%02d:%02d' % (hours, mins) }
+
+    num_photos = len(Photo.query.all())
+    pan_info = { 'name': app.config['PANORAMA'], 'num': num_photos }
+    return render_template('mission_control.html', school_info=school, time_info=time_info, pan_info=pan_info, group_id=get_group_id())
 
 # tested
 @app.route('/show/samples')
