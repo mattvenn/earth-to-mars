@@ -4,7 +4,7 @@ import csv
 os.environ["DIAG_CONFIG_MODULE"] = "mc.config_real"
 from mc import app
 from mc import db
-from mc.models import Teams, School, Sample, Questions, Answers, GroupGraph
+from mc.models import Teams, School, Sample, Questions, Answers, GroupGraph, Photo
 from mc import graphing
 
 def populate():
@@ -45,12 +45,17 @@ def drop_graphs():
     for f in photos:
         os.remove(f)
 
-# drop db
-db.drop_all()
-# delete graphs
-drop_graphs()
+def reset():
+    # drop db
+    db.drop_all()
+    # delete graphs
+    drop_graphs()
 
-# init
-db.create_all()
-populate()
-graphing.update_group_graph()
+    # init
+    db.create_all()
+    populate()
+    graphing.update_group_graph()
+    Photo.init()
+
+if __name__ == '__main__':
+    reset()

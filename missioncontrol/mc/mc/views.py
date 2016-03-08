@@ -175,11 +175,6 @@ def show_samples():
 def show_group_graph(type):
     return render_template('show_group_graph.html', type=type, group_id=get_group_id())
 
-# untested
-@app.route('/show/panorama')
-def show_panorama():
-    return render_template('panorama.html', name=app.config['PANORAMA'])
-
 # tested
 @app.route('/upload/sample', methods=['GET', 'POST'])
 def add_sample():
@@ -349,21 +344,4 @@ def add_photo():
 
     return render_template('add_photo.html', form=form)
 
-@app.route('/show/photos')
-def show_photos():
-    maxx = app.config['MAX_X']
-    maxy = app.config['MAX_Y']
-    photos = [[None for y in range(maxy)] for x in range(maxx)]
-    for x in range(maxx):
-        for y in range(maxy):
-            photo = Photo.query.filter(Photo.x == x, Photo.y == y).first()
-            if photo:
-                photos[x][y] = photo
-
-    return render_template('show_photos.html', photos=photos)
-
-@app.route('/show/photo/<int:photo_id>')
-def show_photo(photo_id):
-    photo = Photo.query.get(photo_id)
-    return render_template('show_photo.html', photo=photo)
 

@@ -96,12 +96,7 @@ class Photo(db.Model):
     def add_to_panorama(self):
         dir = app.static_folder + "/photos/"
         # open background or create it
-        try:
-            background = Image.open(dir + app.config['PANORAMA'], 'r')
-        except IOError:
-            w = app.config['PANORAMA_W']
-            h = app.config['PANORAMA_H']
-            background = Image.new('RGBA', (w, h), (255, 255, 255, 255))
+        background = Image.open(dir + app.config['PANORAMA'], 'r')
 
         # resize image
         img = Image.open(dir + self.image_path)
@@ -129,6 +124,14 @@ class Photo(db.Model):
         background.paste(img, (offset_px, 0), mask)
 
         # save panorama
+        background.save(dir + app.config['PANORAMA'])
+
+    @staticmethod
+    def init():
+        w = app.config['PANORAMA_W']
+        h = app.config['PANORAMA_H']
+        dir = app.static_folder + "/photos/"
+        background = Image.new('RGBA', (w, h), (255, 255, 255, 255))
         background.save(dir + app.config['PANORAMA'])
 
     @staticmethod
