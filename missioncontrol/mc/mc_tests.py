@@ -73,7 +73,7 @@ class MCEmptyTest(TestCase):
 
     def test_login_logout(self):
         rv = self.login(app.config['USERNAME'], app.config['PASSWORD'])
-        assert 'back to mission control' in rv.data
+        assert 'Back to Mission Control' in rv.data
         rv = self.logout()
         assert 'You were logged out' in rv.data
         rv = self.login('xxxx', 'default')
@@ -83,7 +83,7 @@ class MCEmptyTest(TestCase):
 
     def test_admin_auth(self):
         rv = self.login(app.config['USERNAME'], app.config['PASSWORD'])
-        assert 'back to mission control' in rv.data
+        assert 'Back to Mission Control' in rv.data
         rv = self.client.get("/admin/sample", follow_redirects=True)
         assert 'sure you want to delete' in rv.data
 
@@ -136,8 +136,8 @@ class MCPopulatedTest(TestCase):
 
     def test_mission_control(self):
         rv = self.client.get("/")
-        assert 'Points: 0' in rv.data
-        assert 'School: test' in rv.data
+        assert '<h2>0</h2>' in rv.data
+        assert '</span>test</h1>' in rv.data
 
     def test_samples(self):
         rv = self.client.get("/show/samples")
@@ -167,7 +167,7 @@ class MCPopulatedTest(TestCase):
         assert 'sample logged' in rv.data
 
         rv = self.client.get("/")
-        assert 'Points: 1' in rv.data
+        assert '<h2>1</h2>' in rv.data
 
         rv = self.client.get("/show/samples")
         assert '0.1' in rv.data
