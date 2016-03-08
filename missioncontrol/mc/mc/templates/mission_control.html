@@ -71,7 +71,7 @@
                 </div>
 
                 <a href="{{ url_for('show_group_graph', type='methane') }}">
-                <img style="width:100%;" src="{{ url_for('static', filename='graphs/methane_group_%d.png' % group_id) }}"></a>
+                <img style="width:100%;display:block;" src="{{ url_for('static', filename='graphs/methane_group_%d.png' % group_id) }}"></a>
 
                 <div class="corners">
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-bl.png')}}" />
@@ -89,7 +89,7 @@
                     <img style="float:right" src="{{ url_for('static', filename='Images/corner-tr.png')}}" />
                 </div>
                 <a href="{{ url_for('show_group_graph', type='temperature') }}">
-                    <img style="width:100%;" src="{{ url_for('static', filename='graphs/temperature_group_%d.png' % group_id) }}"></a>
+                    <img style="width:100%;display:block;" src="{{ url_for('static', filename='graphs/temperature_group_%d.png' % group_id) }}"></a>
 
                 <div class="corners">
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-bl.png')}}" />
@@ -105,7 +105,7 @@
                     <img style="float:right" src="{{ url_for('static', filename='Images/corner-tr.png')}}" />
                 </div>
             <a href="{{ url_for('show_group_graph', type='humidity') }}">
-            <img style="width:100%;" src="{{ url_for('static', filename='graphs/humidity_group_%d.png' % group_id) }}"></a>
+            <img style="width:100%;display:block;" src="{{ url_for('static', filename='graphs/humidity_group_%d.png' % group_id) }}"></a>
 
                 <div class="corners">
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-bl.png')}}" />
