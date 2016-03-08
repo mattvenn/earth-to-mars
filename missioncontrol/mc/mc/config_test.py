@@ -8,7 +8,7 @@ PASSWORD = 'default'
 PANORAMA = 'panorama.jpg'
 PANORAMA_H = 80
 PANORAMA_W = 1050
-PANORAMA_MIN_D = 5
+PANORAMA_MIN_D = 7
 MAX_X = 30
 MAX_Y = 20
 
