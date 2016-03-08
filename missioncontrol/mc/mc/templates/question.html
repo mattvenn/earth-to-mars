@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="col-md-8 col-md-offset-2">
 {% from "_formhelpers.html" import render_field %}
   {% if question %}
 <form action="{{ url_for('questions', question_id = question.id) }}" method=post class=question>
@@ -14,5 +15,6 @@
   {% else %}
     <p class="question">Couldn't find that question!
   {% endif %}
+</div>
 {% endblock %}
 
