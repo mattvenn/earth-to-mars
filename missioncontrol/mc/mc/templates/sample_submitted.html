@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if sample %}
+<div class="col-md-12">
   <img class="submit-graph" src="{{ url_for('static', filename='graphs/after_submit_%d.png' % sample.id) }}"> 
-  <p>
+</div>
+</div><div class="row">
+<div class="col-md-8 col-md-offset-2">
   <div class="samples">
   <table>
   <tr>
@@ -22,8 +25,9 @@
     <td>{{sample.humidity | round(2)}}</td>
   </tr>
   </table>
+</div>
+</div>
   {% else %}
     <p>No sample!
   {% endif %}
-  </ul>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 {% from "_formhelpers.html" import render_field %}
-
+<div class="col-md-8 col-md-offset-2">
 <h4>Add a Sample</h4>
 
 <form action="{{ url_for('add_sample') }}" method=post class=upload-sample>
@@ -16,4 +16,5 @@
   </dl>
   <p><input type=submit value=Register>
 </form>
+</div>
 {% endblock %}

@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="col-md-8 col-md-offset-2">
 {% from "_formhelpers.html" import render_field %}
 <form action="{{ url_for('add_photo') }}" method=post class=upload-photo enctype=multipart/form-data>
   <dl>
@@ -11,4 +12,5 @@
   </dl>
   <p><input type=submit value=Upload>
 </form>
+</div>
 {% endblock %}

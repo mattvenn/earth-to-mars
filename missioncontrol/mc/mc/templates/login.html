@@ -1,5 +1,6 @@
-{% extends "forms_layout.html" %}
+{% extends "layout.html" %}
 {% block body %}
+<div class="col-md-8 col-md-offset-2">
   <h2>Login</h2>
   {% from "_formhelpers.html" import render_field %}
   <form action="{{ url_for('login') }}" method=post>
@@ -10,4 +11,5 @@
   </dl>
     <p><input type=submit value=Login>
   </form>
+  </div>
 {% endblock %}

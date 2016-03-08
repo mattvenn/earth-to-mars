@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="col-md-8 col-md-offset-2">
   {% if question %}
     <p class="answer">Answer: {{ question.answer }}</p>
     {% if question.image_path %}
@@ -9,5 +10,6 @@
     <p class="answer">Couldn't find an answer to that question!
   {% endif %}
   </ul>
+</div>
 {% endblock %}
 

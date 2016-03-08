@@ -1,7 +1,12 @@
 {% extends "layout.html" %}
 {% block body %}
   {% if photo %}
+<div class="col-md-12">
   <img class="submit-photo" src="{{ url_for('static', filename='photos/%s' % photo.image_path) }}"> 
+
+</div>
+</div><div class="row">
+<div class="col-md-8 col-md-offset-2">
   <div class="samples">
   <table>
   <tr>
@@ -15,6 +20,8 @@
     <td>{{photo.y}}</td>
   </tr>
   </table>
+</div>
+</div>
   {% else %}
     <p>No photo!
   {% endif %}

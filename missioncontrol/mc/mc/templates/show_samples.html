@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="col-md-8 col-md-offset-2">
 <!--  <img src="{{ url_for('static', filename='vor.png') }}"> -->
   {% if not samples %}
     <p>No samples here so far
@@ -28,4 +29,5 @@
   </table>
   </div>
   {% endif %}
+  </div>
 {% endblock %}
