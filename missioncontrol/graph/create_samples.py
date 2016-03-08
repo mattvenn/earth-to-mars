@@ -47,7 +47,7 @@ for x in range(0,maxx):
             xpix = SAMPLE_TYPES[sample_type]['img'].size[0] / maxx * x
             ypix = SAMPLE_TYPES[sample_type]['img'].size[1] / maxy * y
             box = (xpix - reg_size, ypix - reg_size, xpix + reg_size, ypix + reg_size) 
-            avg = avg_region(SAMPLE_TYPES[sample_type]['img'], box)[0]
+            avg = avg_region(SAMPLE_TYPES[sample_type]['img'], box)
             val = translate(avg,255,0,SAMPLE_TYPES[sample_type]['min'],SAMPLE_TYPES[sample_type]['max'])
             samples[y][x][sample_type] = round(val,2)
     
