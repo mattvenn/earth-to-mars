@@ -4,6 +4,7 @@ from wtforms import validators
 from flask_wtf import Form
 from flask import request, redirect, url_for, flash, session
 from init_db import reset
+from mc import client
 
 class Reset(BaseView):
     def is_accessible(self):
@@ -20,6 +21,7 @@ class Reset(BaseView):
             if request.form.has_key('reset'):
                 flash("reset all data")
                 reset()
-            if request.form.has_key('shutdown'):
-                flash("shutting down")
+            if request.form.has_key('shutdownrobots'):
+                flash("shutting down robots")
+                client.publish('/missioncontrol/shutdown')
         return self.render('admin/reset.html')

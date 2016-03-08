@@ -1,9 +1,13 @@
 {% extends 'admin/master.html' %}
 {% import 'admin/lib.html' as lib with context %}
 {% block body %}
+      <p>
       <a href="{{ url_for('zipped_data') }}">Download zip of data</a>
     
     {% call lib.form_tag() %}
+      <p>
       <input type="submit" name="reset" value="Reset website data"/>
+      <p>
+      <input type="submit" name="shutdownrobots" value="Shutdown Robots"/>
     {% endcall %}
 {% endblock %}
