@@ -5,7 +5,7 @@ flask-wtf
 wtforms
 six
 python-dateutil
-# on the Pi better to install the following with apt-get
+# usually better to install the following with apt-get
 numpy
 matplotlib 
 scipy
