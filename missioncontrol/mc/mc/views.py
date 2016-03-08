@@ -3,7 +3,7 @@ from mc import db
 from sqlalchemy.exc import IntegrityError
 import datetime
 from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash, jsonify, make_response
+     abort, render_template, flash, jsonify, make_response, send_file
 from contextlib import closing
 from flask_admin.contrib.sqla import ModelView
 import time
@@ -16,7 +16,7 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from mc.models import Teams, School, Sample, Answers, Questions, GroupGraph, Photo
-from graphing import submit_graph, update_group_graph
+from graphing import submit_graph, update_group_graph, get_group_graph_name
 from werkzeug import secure_filename
 import os
 
@@ -214,7 +214,7 @@ def handle_invalid_usage(error):
     response.status_code = error.status_code
     return response
 
-def make_csv_response(head, list, name):
+def make_csv(head, list):
     import StringIO
     import csv
     si = StringIO.StringIO()
@@ -222,7 +222,10 @@ def make_csv_response(head, list, name):
     cw.writerow(head)
     for i in list:
         cw.writerow(i.get_csv())
-#    return si.getvalue().strip('\r\n')
+    return si
+
+def make_csv_response(head, list, name):
+    si = make_csv(head, list)
     response = make_response(si.getvalue())
     response.headers["Content-Disposition"] = "attachment; filename=%s" % name
     return response
@@ -239,6 +242,36 @@ def api_get_answers():
     answers = Answers.query.all()
     head = Answers.get_csv_head()
     return make_csv_response(head, answers,'answers.csv')
+
+# build an archive of all the cool data and zip it
+@app.route('/api/zipped-data')
+def zipped_data():
+    import zipfile
+    import io
+    import json
+    memory_file = io.BytesIO()
+    with zipfile.ZipFile(memory_file, 'w') as zf:
+
+        for name in app.config['SAMPLE_TYPES'].keys():
+            graph_name = get_group_graph_name(name, get_group_id())
+            zf.write(graph_name, name + '.png')
+
+        answers = Answers.query.all()
+        head = Answers.get_csv_head()
+        answers_csv = make_csv(head, answers)
+        zf.writestr('answers.csv', answers_csv.getvalue())
+
+        questions = Questions.query.all()
+        head = Questions.get_csv_head()
+        questions_csv = make_csv(head, questions)
+        zf.writestr('questions.csv', questions_csv.getvalue())
+
+        samples = Sample.query.all()
+        data = { 'samples' : [sample.serialise() for sample in samples]}
+        zf.writestr('samples.json', json.dumps(data))
+
+    memory_file.seek(0)
+    return send_file(memory_file, attachment_filename='data.zip', as_attachment=True)
 
 # tested
 @app.route('/api/team/<name>')

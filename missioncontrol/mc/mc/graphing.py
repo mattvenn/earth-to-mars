@@ -104,9 +104,12 @@ def update_group_graph():
                     plt.fill(*zip(*polygon), color=(color, color, color))
                         
 
-        plt.savefig(app.static_folder + "/graphs/" + name + "_group_%d.png" % group.id)
+        plt.savefig(get_group_graph_name(name, group.id))
         plt.close()
-        
+
+def get_group_graph_name(name, group_id):
+    return app.static_folder + "/graphs/" + name + "_group_%d.png" % group_id
+
 def submit_graph(sample):
     maxx = app.config['MAX_X']
     maxy = app.config['MAX_Y']

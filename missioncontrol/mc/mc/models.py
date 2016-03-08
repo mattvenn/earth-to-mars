@@ -19,10 +19,10 @@ class Questions(db.Model):
 
     @staticmethod
     def get_csv_head():
-        return "id", "question"
+        return "id", "question", "answer"
 
     def get_csv(self):
-        return self.id, self.question
+        return self.id, self.question, self.answer
 
 class Answers(db.Model):
     __tablename__ = 'answers'
