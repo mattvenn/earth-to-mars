@@ -46,7 +46,6 @@
         #Readings>div h1 {margin:0; text-align:center}
         #Readings>div h2 {margin:0; text-align:center}
         #Readings>div h2 span {color:#00A0DE}
-        #Readings>div p img {width:100%;}
 
         #Status {display:table;width:100%;margin-bottom:2px;}
         #Status div {display: table-cell; background-color: #494948;padding:15px; }
@@ -57,7 +56,7 @@
         #Exit {display:table; width:100%}
         #Exit p {display: table-cell;background-color:#B3B2B2; width:auto; color:black; height:60px; margin:0;padding:10px; vertical-align:top}
         #Exit div {display: table-cell; height:80px; width:100px}
-        #Exit div button {height:80px;margin-left:2px;width:100px}
+        #Exit div {height:80px;margin-left:2px;width:100px}
 
         .corners {background-color:#B3B2B2; height:8px}
         .cornertop {background-color:#2C2C2B; height:8px}

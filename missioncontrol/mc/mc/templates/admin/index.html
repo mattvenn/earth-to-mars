@@ -1,5 +1,10 @@
 {% extends 'admin/master.html' %}
 
 {% block body %}
-  <a href="{{ url_for('mission_control') }}">back to mission control</a>
+  {% if session.logged_in %}
+    <li class="nav"><a href="{{ url_for('logout') }}">Log Out</a></li>
+  {% else %}
+    <li class="nav"><a href="{{ url_for('login') }}">Log In</a></li>
+  {% endif %}
+  <a href="{{ url_for('mission_control') }}">Back to Mission Control</a>
 {% endblock %}

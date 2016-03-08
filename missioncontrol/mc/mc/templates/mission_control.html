@@ -69,10 +69,9 @@
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-tl.png')}}" />
                     <img style="float:right" src="{{ url_for('static', filename='Images/corner-tr.png')}}" />
                 </div>
-                <p>
+
                 <a href="{{ url_for('show_group_graph', type='methane') }}">
-                <img src="{{ url_for('static', filename='graphs/methane_group_%d.png' % group_id) }}"></a>
-                </p>
+                <img style="width:100%;" src="{{ url_for('static', filename='graphs/methane_group_%d.png' % group_id) }}"></a>
 
                 <div class="corners">
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-bl.png')}}" />
@@ -89,10 +88,8 @@
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-tl.png')}}" />
                     <img style="float:right" src="{{ url_for('static', filename='Images/corner-tr.png')}}" />
                 </div>
-                <p>
                 <a href="{{ url_for('show_group_graph', type='temperature') }}">
-                    <img class="mc-graph" src="{{ url_for('static', filename='graphs/temperature_group_%d.png' % group_id) }}"></a>
-                </p>
+                    <img style="width:100%;" src="{{ url_for('static', filename='graphs/temperature_group_%d.png' % group_id) }}"></a>
 
                 <div class="corners">
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-bl.png')}}" />
@@ -107,10 +104,8 @@
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-tl.png')}}" />
                     <img style="float:right" src="{{ url_for('static', filename='Images/corner-tr.png')}}" />
                 </div>
-                <p>
             <a href="{{ url_for('show_group_graph', type='humidity') }}">
-            <img class="mc-graph" src="{{ url_for('static', filename='graphs/humidity_group_%d.png' % group_id) }}"></a>
-                </p>
+            <img style="width:100%;" src="{{ url_for('static', filename='graphs/humidity_group_%d.png' % group_id) }}"></a>
 
                 <div class="corners">
                     <img style="float:left" src="{{ url_for('static', filename='Images/corner-bl.png')}}" />
@@ -131,7 +126,10 @@
             <p>
              <img src="{{ url_for('static', filename='photos/%s' % (pan_info.name)) }}">
             </p>
-            <div><button>EXIT</button></div>
+
+             <a href="{{ url_for('add_sample') }}">EXIT</a>
+            
+
         </div>
         
         <p></p>

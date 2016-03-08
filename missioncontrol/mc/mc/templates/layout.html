@@ -1,24 +1,67 @@
 <!doctype html>
-<title>Mission Control</title>
-<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<meta http-equiv="refresh" content="60">
-<div class=page>
-  <h1><a href="{{ url_for('mission_control') }}">Mission Control</a></h1>
-  {% for message in get_flashed_messages() %}
-    <div class=flash>{{ message }}</div>
-  {% endfor %}
-  {% block body %}{% endblock %}
-<div class=footer>
-    <a href="{{ url_for('mission_control') }}">mission control</a>
-    <a href="{{ url_for('add_sample') }}">add sample</a>
-    <a href="{{ url_for('add_photo') }}">add photo</a>
-    <a href="{{ url_for('show_samples') }}">samples</a>
-    <a href="{{ url_for('show_photos') }}">photos</a>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mission Control</title>
+
+    <script src="{{ url_for('static', filename='jquery/jquery-2.2.1.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='bootstrap-3.3.6/js/bootstrap.js')}}"></script>
+    <link href="{{ url_for('static', filename='bootstrap-3.3.6/css/bootstrap.min.css')}}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/site.css')}}" rel="stylesheet" />
+
+</head>
+<body>
+    <div id="page">
+        <header class="container navbar-fixed-top">
+            <div id="menu" class="navbar navbar-default ">
+                <div class="navbar-header">
+                    <button class="btn btn-success navbar-toggle"
+                            data-toggle="collapse"
+                            data-target=".navbar-collapse">
+                        Menu
+                    </button>
+                    <div id="logo">
+                        <a href="http://mission.control/"><img src="{{ url_for('static', filename='Images/logo.png')}}" alt="logo" />Mission Control</a>
+                    </div>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+
+
+    <li class="nav"><a href="{{ url_for('add_sample') }}">Add sample</a></li>
+    <li class="nav"><a href="{{ url_for('add_photo') }}">Add photo</a></li>
+    <li class="nav"><a href="{{ url_for('show_samples') }}">Samples</a></li>
   {% if session.logged_in %}
-    <a href="{{ url_for('logout') }}">log out</a>
-    <a href="/admin">admin</a>
+    <li class="nav"><a href="{{ url_for('logout') }}">Log Out</a></li>
+    <li class="nav"><a href="/admin">Admin</a></li>
   {% else %}
-    <a href="{{ url_for('login') }}">log in</a>
+    <li class="nav"><a href="{{ url_for('login') }}">Log In</a></li>
   {% endif %}
-</div>
-</div>
+                    </ul>
+                </div>
+
+
+            </div>
+        </header>
+
+        <div class="container">
+
+<!-- This is the end of the header  ======================================================================= -->
+            <div id="page-content" class="row">
+
+  {% block body %}{% endblock %}
+
+            </div>
+
+<!--This is the start of the footer ======================================================================= -->
+
+        </div>
+        <footer class="container panel-footer">
+
+
+        </footer>
+    </div>
+
+</body>
+</html>

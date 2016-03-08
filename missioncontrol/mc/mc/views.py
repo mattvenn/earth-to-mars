@@ -86,7 +86,7 @@ class PhotoForm(Form):
     x = IntegerField('X', [validators.NumberRange(min=0, max=maxx - 1)])
     y = IntegerField('Y', [validators.NumberRange(min=0, max=maxy - 1)])
 
-    photo = FileField('image', validators=[
+    photo = FileField('Image', validators=[
             FileRequired(message="you must choose a photo"),
             FileAllowed(['jpg', 'png'], message='only images allowed')
             ])
@@ -297,6 +297,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         session['logged_in'] = True
+        flash('You were logged in')
         return redirect('/admin')
     return render_template('login.html', form=form)
 
@@ -305,7 +306,7 @@ def login():
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out')
-    return redirect(url_for('mission_control'))
+    return redirect('/admin')
 
 # tested
 @app.route('/answers/<int:question_id>')

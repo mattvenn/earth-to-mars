@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
 {% from "_formhelpers.html" import render_field %}
+
+<h4>Add a Sample</h4>
+
 <form action="{{ url_for('add_sample') }}" method=post class=upload-sample>
   <dl>
     {{ form.csrf_token }} 
