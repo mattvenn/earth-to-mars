@@ -25,3 +25,7 @@ then
 Setup a cronjob to rebuild graphs every minute:
 
     * * * * * cd earth-to-mars/missioncontrol/mc; ./update_group.py
+
+Install mosquitto mqtt server for robot cleanup & shutdown
+
+sudo apt-get install mosquitto
