@@ -5,6 +5,7 @@ flask-wtf
 wtforms
 six
 python-dateutil
+paho-mqtt
 # usually better to install the following with apt-get
 numpy
 matplotlib 
