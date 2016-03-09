@@ -119,15 +119,14 @@
             <div>
                 <h2><span>PANORAMA: </span> {{ pan_info.num }} PHOTOS UPLOADED</h2>
             </div>
+            <a href="{{ url_for('add_sample') }}">EXIT</a>
 
         </div>
 
-        <div id="Exit">
-            <p>
-             <img src="{{ url_for('static', filename='photos/%s' % (pan_info.name)) }}">
-            </p>
+        <div id="panorama">
+            <img src="{{ url_for('static', filename='photos/%s' % (pan_info.name)) }}">
+        </div>
 
-             <a href="{{ url_for('add_sample') }}">EXIT</a>
             
 
         </div>

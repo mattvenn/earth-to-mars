@@ -17,12 +17,13 @@
 
 
 
-        body {color:white;  width:100%;font-family: 'dincondensedcregular';margin:0;background-color:black;}
-         #Page {background-color:black; padding:20px}
+        body {color:white;font-family: 'dincondensedcregular';margin:0;background-color:black;}
+         #Page {background-color:black; padding:20px; min-width:760px}
          span {color:#00A0DE}
 
         #Summary {background-color:black;overflow:hidden; display:table; width:100% ;min-width:930px;margin-bottom:30px }
         #Summary > div { }  
+
         #Logo {display:table-cell;vertical-align: bottom;width:360px; min-width:360px; height:152px;  margin:0;background-color:#2C2C2B; padding:0px; }
         #Logo > div {width:inherit}
         #Logo > div:first-child {padding:10px 0 0 10px; width:200px; overflow:hidden}
@@ -40,7 +41,7 @@
         #School h1 {float:left; width:auto; margin:0;}
 
         #Readings {display:table;width:100%;margin-bottom:30px;}
-        #Readings>div {display:table-cell; padding-left : 3px}
+        #Readings>div {display:table-cell; padding-left : 3px; width:33.33%}
         #Readings>div:first-child {padding-left : 0px}
         #Readings>div p {background-color:#B3B2B2; color:black; text-align:center;padding:20px 0px; font-size:140px; margin:0}
         #Readings>div h1 {margin:0; text-align:center}
@@ -52,11 +53,11 @@
         #Status div:first-child {border-right: black solid 2px;}
         #Status div h3 {float:left; color:#00A0DE; width:180px; margin:0; }
         #Status div h2 {float:left; width:auto; margin:0; }
+        #Status a {display:table-cell;background-color:#494948; width:100px;  vertical-align:middle; text-align:center; color:white; padding:0; margin:0}
+        #Status a:hover {background:#00A0DE }
 
-        #Exit {display:table; width:100%}
-        #Exit p {display: table-cell;background-color:#B3B2B2; width:auto; color:black; height:60px; margin:0;padding:10px; vertical-align:top}
-        #Exit div {display: table-cell; height:80px; width:100px}
-        #Exit div {height:80px;margin-left:2px;width:100px}
+        #panorama>img {width:100%; height:80px; display:block; color:black }
+
 
         .corners {background-color:#B3B2B2; height:8px}
         .cornertop {background-color:#2C2C2B; height:8px}
