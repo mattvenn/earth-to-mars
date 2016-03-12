@@ -15,7 +15,7 @@ from flask_wtf import Form
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
-from mc.models import Teams, School, Sample, Answers, Questions, GroupGraph, Photo
+from mc.models import Teams, School, Sample, Answers, Questions, GroupGraph, Photo, Panorama
 from graphing import submit_graph, update_group_graph, get_group_graph_name
 from werkzeug import secure_filename
 import os
@@ -160,8 +160,8 @@ def mission_control():
     secs = delta.total_seconds() % 60
     time_info = { 'now': now.strftime('%H:%M'),  'left': '%02d:%02d' % (hours, mins) }
 
-    num_photos = len(Photo.query.all())
-    pan_info = { 'name': app.config['PANORAMA'], 'num': num_photos }
+    pan = Panorama.query.first()
+    pan_info = { 'name': pan.get_pan_name(), 'num': pan.get_num_photos() }
     return render_template('mission_control.html', school_info=school, time_info=time_info, pan_info=pan_info, group_id=get_group_id())
 
 # tested
@@ -369,8 +369,9 @@ def add_photo():
         form.populate_obj(photo)
         photo.image_path = filename
         db.session.add(photo)
-        photo.add_to_panorama()
         db.session.commit()
+        pan = Panorama.query.first()
+        pan.add_to_panorama(photo)
         add_school_point()
 
         return render_template('photo_submitted.html', photo=photo)

@@ -83,38 +83,50 @@ class GroupGraph(db.Model):
     __tablename__ = 'groupgraph'
     id = Column(Integer, primary_key=True)
 
-class Photo(db.Model):
-    __tablename__ = 'photos'
+class Panorama(db.Model):
+    __tablename__ = 'panorama'
     id = Column(Integer, primary_key=True)
-    image_path = Column(String(50), nullable=False)
-    x = Column(Integer(), nullable=False)
-    y = Column(Integer(), nullable=False)
-    team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)
-    team = relationship("Teams")
+    pan_id = Column(Integer, default=0)
 
+    def __init__(self):
+        if self.pan_id is None:
+            self.pan_id = 0
+            self.init()
 
-    def add_to_panorama(self):
+    def get_pan_name(self):
+        return "panorama%d.jpg" % self.pan_id
+
+    def get_num_photos(self):
+        return self.pan_id
+
+    def init(self):
+        w = app.config['PANORAMA_W']
+        h = app.config['PANORAMA_H']
+        background = Image.new('RGBA', (w, h), (255, 255, 255, 255))
         dir = app.static_folder + "/photos/"
-        # open background or create it
-        background = Image.open(dir + app.config['PANORAMA'], 'r')
+        background.save(dir + self.get_pan_name())
+
+    def add_to_panorama(self, photo):
+        dir = app.static_folder + "/photos/"
+        background = Image.open(dir + self.get_pan_name(), 'r')
 
         # resize image
-        img = Image.open(dir + self.image_path)
+        img = Image.open(dir + photo.image_path)
         img_w, img_h = img.size
         thumb_h = app.config['PANORAMA_H']
         thumb_w = img_w / (img_h / thumb_h)
         img.thumbnail((thumb_w, thumb_h) , Image.ANTIALIAS)
 
         # get panorama position
-        offset = Photo.calculate_offset(self.x, self.y)
+        offset = Panorama.calculate_offset(photo.x, photo.y)
         if offset is None:
-            return
+            return False
 
         max_x = app.config['MAX_X']
         max_y = app.config['MAX_Y']
         total_pos = max_x * 2 + max_y * 2
         offset_px = offset * (app.config['PANORAMA_W'] / total_pos)
-        print("(%2d, %2d) offset = %d/%d => %d/%d" % (self.x, self.y, offset, total_pos, offset_px, app.config['PANORAMA_W']))
+        print("(%2d, %2d) offset = %d/%d => %d/%d" % (photo.x, photo.y, offset, total_pos, offset_px, app.config['PANORAMA_W']))
 
         # open mask
         mask = Image.open(app.static_folder + "/alpha.jpg", 'r')
@@ -124,15 +136,9 @@ class Photo(db.Model):
         background.paste(img, (offset_px, 0), mask)
 
         # save panorama
-        background.save(dir + app.config['PANORAMA'])
-
-    @staticmethod
-    def init():
-        w = app.config['PANORAMA_W']
-        h = app.config['PANORAMA_H']
-        dir = app.static_folder + "/photos/"
-        background = Image.new('RGBA', (w, h), (255, 255, 255, 255))
-        background.save(dir + app.config['PANORAMA'])
+        self.pan_id += 1
+        db.session.commit()
+        background.save(dir + self.get_pan_name())
 
     @staticmethod
     def calculate_offset(x, y):
@@ -161,6 +167,16 @@ class Photo(db.Model):
             return None
         
         return offset
+
+class Photo(db.Model):
+    __tablename__ = 'photos'
+    id = Column(Integer, primary_key=True)
+    image_path = Column(String(50), nullable=False)
+    x = Column(Integer(), nullable=False)
+    y = Column(Integer(), nullable=False)
+    team_id = Column(Integer, ForeignKey('teams.id'), nullable=False)
+    team = relationship("Teams")
+
 
 class Sample(db.Model):
     __tablename__ = 'samples'

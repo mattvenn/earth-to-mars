@@ -2,9 +2,9 @@ import unittest
 import time
 from flask.ext.testing import TestCase
 from flask import Flask
-from mc.models import Teams, School, Sample, Photo
+from mc.models import Teams, School, Sample, Photo, Panorama
 import os
-from init_db import populate_test
+from init_db import populate_test, drop_graphs
 from PIL import Image, ImageDraw, ImageFont
 
 # use test environment
@@ -25,6 +25,7 @@ class PanoramaTest(TestCase):
             db.drop_all()
             db.create_all()
             populate_test()
+            drop_graphs()
 
     def test_build_panorama(self):
         h = 200
@@ -34,11 +35,12 @@ class PanoramaTest(TestCase):
 
         font = ImageFont.truetype("/usr/local/lib/python2.7/dist-packages/werkzeug/debug/shared/ubuntu.ttf", 45)
         
-        photo = Photo
+        pan = Panorama()
 #        for x, y in ((24,2),(27,2),(29,2),(29,4),(29,6),(28,8)):
         for y in range(0, app.config['MAX_Y'],2):
             for x in range(0, app.config['MAX_X'],2):
-                offset = Photo.calculate_offset(x, y)
+                offset = Panorama.calculate_offset(x, y)
+
 
                 if offset is None:
                     continue
@@ -67,6 +69,7 @@ class PanoramaPhotoTest(TestCase):
             db.drop_all()
             db.create_all()
             populate_test()
+            dropGraphs()
 
     def test_build_panorama(self):
         count = 0

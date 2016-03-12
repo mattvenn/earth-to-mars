@@ -4,7 +4,7 @@ import csv
 os.environ["DIAG_CONFIG_MODULE"] = "mc.config_real"
 from mc import app
 from mc import db
-from mc.models import Teams, School, Sample, Questions, Answers, GroupGraph, Photo
+from mc.models import Teams, School, Sample, Questions, Answers, GroupGraph, Photo, Panorama
 from mc import graphing
 
 def populate():
@@ -23,7 +23,10 @@ def populate():
     school = School('Schoolname')
     db.session.add(school)
 
+    p = Panorama()
+    db.session.add(p)
     db.session.commit()
+
 
 def populate_test():
     populate()
@@ -55,7 +58,7 @@ def reset():
     db.create_all()
     populate()
     graphing.update_group_graph()
-    Photo.init()
+
 
 if __name__ == '__main__':
     reset()
