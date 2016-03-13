@@ -4,7 +4,7 @@ from flask.ext.testing import TestCase
 from flask import Flask
 from mc.models import Teams, School, Sample, Photo, Panorama
 import os
-from init_db import populate_test, drop_graphs
+from init_db import populate_test, init, reset
 from PIL import Image, ImageDraw, ImageFont
 
 # use test environment
@@ -66,10 +66,9 @@ class PanoramaPhotoTest(TestCase):
     def setUp(self):
         db.init_app(self.app)
         with self.app.app_context():
-            db.drop_all()
-            db.create_all()
+            init()
+            reset()
             populate_test()
-            dropGraphs()
 
     def test_build_panorama(self):
         count = 0
