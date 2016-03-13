@@ -7,6 +7,7 @@ from mc import db
 from mc.models import Teams, School, Sample, Questions, Answers, GroupGraph, Photo, Panorama
 from mc import graphing
 
+# populates a new database with initial records
 def populate():
     with open('teams.csv', 'rb') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='|')
@@ -22,9 +23,6 @@ def populate():
 
     school = School('Schoolname')
     db.session.add(school)
-
-    p = Panorama()
-    db.session.add(p)
     db.session.commit()
 
 
@@ -48,17 +46,32 @@ def drop_graphs():
     for f in photos:
         os.remove(f)
 
-def reset():
-    # drop db
+# drops and replaces all tables
+def init():
     db.drop_all()
+    db.create_all()
+
+# resets the database between workshops
+def reset():
+    # delete all records
+    Answers.query.delete()
+    GroupGraph.query.delete()
+    Panorama.query.delete()
+    Photo.query.delete()
+    Sample.query.delete()
+
     # delete graphs
     drop_graphs()
 
-    # init
-    db.create_all()
-    populate()
+    # init graphs
     graphing.update_group_graph()
+
+    p = Panorama()
+    db.session.add(p)
+    db.session.commit()
 
 
 if __name__ == '__main__':
+    init()
     reset()
+    populate()

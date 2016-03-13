@@ -5,7 +5,7 @@ import os
 import json
 from mc.models import Teams, School, Sample
 from mc.graphing import map_color
-from init_db import populate_test
+from init_db import init, populate_test, reset
 
 # use test environment
 os.environ["DIAG_CONFIG_MODULE"] = "mc.config_test"
@@ -107,8 +107,8 @@ class MCPopulatedTest(TestCase):
     def setUp(self):
         db.init_app(self.app)
         with self.app.app_context():
-            db.drop_all()
-            db.create_all()
+            init()
+            reset()
             populate_test()
 
     def tearDown(self):
@@ -119,6 +119,23 @@ class MCPopulatedTest(TestCase):
         assert self.get_school_points() == 0
         add_school_point()
         assert self.get_school_points() == 1
+
+        # check that adding a new school will mean points is 0
+        school = School('Schoolname2')
+        db.session.add(school)
+
+        assert self.get_school_points() == 0
+        add_school_point()
+        assert self.get_school_points() == 1
+
+    def test_reset(self):
+        assert self.get_school_points() == 0
+        add_school_point()
+        assert self.get_school_points() == 1
+        # check that resetting won't remove old school points
+        reset()
+        assert self.get_school_points() == 1
+        
 
     def test_get_teams(self):
         assert len(get_teams()) == 15
