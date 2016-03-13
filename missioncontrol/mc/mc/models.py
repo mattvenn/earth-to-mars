@@ -49,11 +49,9 @@ class Teams(db.Model):
     __tablename__ = 'teams'
     id = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True, nullable=False)
-    points = Column(Integer)
 
-    def __init__(self, name=None, points=0):
+    def __init__(self, name=None):
         self.name = name
-        self.points = points
 
     def __repr__(self):
         return self.name
@@ -62,7 +60,6 @@ class Teams(db.Model):
         return {
             'id' : self.id,
             'name' : self.name,
-            'points' : self.points,
             }
 
 class School(db.Model):
