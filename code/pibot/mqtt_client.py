@@ -1,6 +1,8 @@
 import paho.mqtt.client as mqtt
 import glob, os
 import time
+import socket
+
 """
 when receives mqtt message /missioncontrol/shutdown
 this program will:
@@ -46,9 +48,13 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("mission.control", 1883, 60)
-
-try:
-    client.loop_forever()
-except KeyboardInterrupt as e:
-    print("ending")
+while True:
+    try:
+        client.connect("mission.control", 1883, 60)
+        client.loop_forever()
+        break
+    except socket.error:
+        print("no network")
+        time.sleep(5)
+    except KeyboardInterrupt as e:
+        print("ending")
