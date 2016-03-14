@@ -10,19 +10,10 @@ this program will:
     shutdown the computer
 """
 
-def shutdown():
-    files = []
-    # individual files
-    for file in ["mission.txt"]:
-        print file
-        files.append(os.path.expanduser('~/' + file))
-    # globs
-    for pat in ["*.py*", "*.jpg", "*.png"]:
-        files += glob.glob(os.path.expanduser('~/' + pat))
+def cleanup():
+    print("about to remove all student files from /home/pi/")
+    files = glob.glob(os.path.expanduser('/home/pi/*'))
 
-    # remove them after a warning
-    print("about to remove all student files from ~/. ^C to abort!")
-    time.sleep(3)
     for file in files:
         print("removing %s" % file)
         try:
@@ -30,6 +21,7 @@ def shutdown():
         except OSError:
             pass
 
+def halt():
     print("halt")
     os.system('sudo halt')
 
@@ -38,8 +30,10 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("/missioncontrol/#")
 
 def on_message(client, userdata, msg):
-    if msg.topic == '/missioncontrol/shutdown':
-        shutdown()
+    if msg.topic == '/missioncontrol/cleanup':
+        cleanup()
+    if msg.topic == '/missioncontrol/halt':
+        halt()
     else:
         print(msg.topic+" "+str(msg.payload))
         
