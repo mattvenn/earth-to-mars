@@ -21,7 +21,10 @@ class Reset(BaseView):
             if request.form.has_key('reset'):
                 flash("reset all data")
                 reset()
+            if request.form.has_key('cleanuprobots'):
+                flash("cleaning up robots")
+                client.publish('/missioncontrol/cleanup')
             if request.form.has_key('shutdownrobots'):
                 flash("shutting down robots")
-                client.publish('/missioncontrol/shutdown')
+                client.publish('/missioncontrol/halt')
         return self.render('admin/reset.html')
