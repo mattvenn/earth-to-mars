@@ -152,7 +152,9 @@ def get_group_id():
 def mission_control():
     school = School.query.order_by(School.timestamp.desc()).first()
     now = datetime.datetime.now()
-    end_time = datetime.datetime.now().replace(hour=15,minute=0,second=0)
+    end_hour = app.config['END_HOUR']
+    end_min = app.config['END_MIN']
+    end_time = datetime.datetime.now().replace(hour=end_hour,minute=end_min,second=0)
     delta = end_time - now
     mins = delta.total_seconds() / 60
     hours = mins / 60
