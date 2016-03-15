@@ -5,6 +5,7 @@ from flask_wtf import Form
 from flask import request, redirect, url_for, flash, session
 from init_db import reset
 from mc import client
+import os
 
 class Reset(BaseView):
     def is_accessible(self):
@@ -27,4 +28,7 @@ class Reset(BaseView):
             if request.form.has_key('shutdownrobots'):
                 flash("shutting down robots")
                 client.publish('/missioncontrol/halt')
+            if request.form.has_key('shutdownmc'):
+                flash("shutting down mission control")
+                os.system("shutdown -h now")
         return self.render('admin/reset.html')
