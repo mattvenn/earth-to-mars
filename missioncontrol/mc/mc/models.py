@@ -17,6 +17,9 @@ class Questions(db.Model):
         self.answer = answer
         self.image_path = image_path
 
+    def __repr__(self):
+        return self.question
+
     @staticmethod
     def get_csv_head():
         return "id", "question", "answer"
