@@ -63,7 +63,6 @@ def update_group_graph():
     maxy = app.config['MAX_Y']
     group = GroupGraph()
     db.session.add(group)
-    db.session.commit()
 
     samples = Sample.query.all()
 
@@ -106,6 +105,8 @@ def update_group_graph():
 
         plt.savefig(get_group_graph_name(name, group.id))
         plt.close()
+
+    db.session.commit()
 
 def get_group_graph_name(name, group_id):
     return app.static_folder + "/graphs/" + name + "_group_%d.png" % group_id
