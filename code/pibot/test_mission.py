@@ -51,11 +51,14 @@ class TestMission(unittest.TestCase):
 
     def test_upload_data(self):
         m = Mission()
-        location_rfid = m.rfid_hash.keys()[0]
+        location_rfid = m.rfid_hash.keys()[101]
         sample = m.takeSample(location_rfid)
         new_sample = m.uploadSample(sample, team='AuRoRa')
         for k in ['temperature', 'humidity', 'methane', 'x', 'y']:
             assert new_sample[k] == sample[k]
+
+        repeated_sample = m.uploadSample(sample, team='AuRoRa')
+        assert 'your team already uploaded' in repeated_sample
 
     def test_upload_bad_team(self):
         m = Mission()
@@ -68,13 +71,12 @@ class TestMission(unittest.TestCase):
 
     def test_upload_bad_data(self):
         m = Mission()
-        location_rfid = m.rfid_hash.keys()[0]
+        location_rfid = m.rfid_hash.keys()[5]
         sample = m.takeSample(location_rfid)
         sample['methane'] = 1000
-        with self.assertRaises(Exception) as e:
-            m.uploadSample(sample, team='Aurora')
+        uploaded = m.uploadSample(sample, team='Aurora')
 
-        assert 'must be between' in str(e.exception)
+        assert 'invalid data' in uploaded
 
     @unittest.skip("skipping random data")
     def test_upload_random_data(self):
@@ -94,6 +96,10 @@ class TestMission(unittest.TestCase):
     
     def test_get_all_samples(self):
         m = Mission()
+        location_rfid = m.rfid_hash.keys()[102]
+        sample = m.takeSample(location_rfid)
+        new_sample = m.uploadSample(sample, team='AuRoRa')
+
         samples = m.getAllSamples()
         assert type(samples) == list
         assert len(samples) > 0

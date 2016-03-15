@@ -116,7 +116,9 @@ class Mission():
         # posts it
         r = requests.post(mc_url + '/api/sample', json=sample)
         if r.status_code == 400:
-            raise Exception(r.text)
+            return r.text
+            #exeception stops the program
+            #raise Exception(r.text)
 
         new_sample = json.loads(r.text)
         print("uploaded sample %d" % new_sample['id'])
