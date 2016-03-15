@@ -2,7 +2,7 @@
 {% import 'admin/lib.html' as lib with context %}
 {% block body %}
       <p>
-      <a href="{{ url_for('zipped_data') }}">Download zip of data</a>
+      <h1><a href="{{ url_for('zipped_data') }}">Download zip of data before reset!</a></h1>
     
     {% call lib.form_tag() %}
       <p>
