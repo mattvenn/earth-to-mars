@@ -46,7 +46,7 @@ class Answers(db.Model):
         return "id","question_id","team","answer"
 
     def get_csv(self):
-        return self.id, self.question.id, self.team, self.answer
+        return self.id, self.question.id, self.team, self.answer.encode('utf8')
 
 class Teams(db.Model):
     __tablename__ = 'teams'
